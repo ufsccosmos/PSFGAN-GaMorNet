@@ -16,7 +16,7 @@ In this section, we will give an exhaustive guide about how to use our `PSFGAN-G
 The `PSFGAN-GaMorNet` framework has multiple components, and they are expected to be executed in a **fixed** order. The output of the N-th component is by default the input of the (N+1)-th component.
 However, if you already have data that is equivalent to the output of the N-th component, you may skip using the N-th and all previous components and jump to the (N+1)-th component directly.
 ### Data splitting
-### Artificial AGN Creation
+### Artificial AGN creation
 ### Training PSFGAN
 ### Applying trained PSFGAN
 ### Generating morphological labels
