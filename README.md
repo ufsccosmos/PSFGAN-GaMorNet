@@ -7,4 +7,4 @@ This repository contains source code for the `PSFGAN-GaMorNet` framework (discus
 
 `Python 3.6` for `GaMorNet`
 
-Necessary packages (including but not limited to): `NumPy`, `SciPy`, `Astropy`, `Pandas`, 'TensorFlow`, etc.
+Necessary packages (including but not limited to): `NumPy`, `SciPy`, `Astropy`, `Pandas`, `TensorFlow`, etc.
