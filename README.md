@@ -13,4 +13,4 @@ Clone this repository and change the present working directory to `PSFGAN-GaMorN
 ## A comprehensive guide to using PSFGAN-GaMorNet
 In this section, we will give an exhaustive guide about how to use our `PSFGAN-GaMorNet` framework as well as other related modules.
 ### Introduction
-
+The `PSFGAN-GaMorNet` framework has multiple components, and they are expected to be executed in a **fixed** order. The output of the N-th component is by default the input od the (N+1)-th component.
