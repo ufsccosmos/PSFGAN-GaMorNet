@@ -62,7 +62,7 @@ The first step is to split raw data images into five subsets:
 4) `gmn_eval` (validation set for `GaMorNet`)
 5) `fits_test` (common test set)
 
-To do so, we will need to use 'data_split.py'. Set the following parameters to correct values before proceed:
+To do so, we will need to use `data_split.py`. Set the following parameters to correct values before proceed:
 1) `core_path`: path in which PSFGAN is stored (see above)
 2) `galaxy_main`: `core_path` + `gal_sim_0_0.25/`
 3) `filter_strings`: `['g']` (filter(s) of raw data images)
