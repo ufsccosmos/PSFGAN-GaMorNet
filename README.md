@@ -53,10 +53,25 @@ PSFGAN-GaMorNet/
 ```
 
 The `PSFGAN-GaMorNet` assumes raw data images are stored (in .fits format) in an `image` folder. There should also be a separate catalog file (in .csv format) that contains necessary information of each image. (Please refer to these files for detailed information)
-In this guide, we will use simulated galaxies (which were created 
+In this guide, we will use $150,000$ simulated galaxies (which were created w.r.t. $0<z<0.25$ real galaxies in HSC Wide Survey) as example.
 #### Data splitting
-
-
+The first step is to split raw data images into five subsets:
+1) `fits_train` (training set for `PSFGAN`)
+2) `fits_eval` (validation set for `PSFGAN`)
+3) `gmn_train` (training set for `GaMorNet`)
+4) `gmn_eval` (validation set for `GaMorNet`)
+5) `fits_test` (common test set)
+To do so, we will need to use 'data_split.py'. Set the following parameters to correct values before proceed:
+1) `core_path`: path in which PSFGAN is stored (see above)
+2) `galaxy_main`: `core_path` + `gal_sim_0_0.25/`
+3) `filter_strings`: `['g']` (filter(s) of raw data images)
+4) `desired_shape`: `[239, 239]` (desired shape of output images in pixels)
+5) `--gmn_train`, `--gmn_eval`, `--psf_train`, `--psf_eval`, and `--test`: set their default values to numbers of images you want each subset to have (they should sum up to $150,000$, the number of images in `raw_data` of `gal_sim_0_0.25`)
+6) `--shuffle`: `1` (`1` to shuffle images before splitting, `0` otherwise)
+7) `--source`: `gal_sim_0_0.25` (name of the source of the raw data --- this should be the same of the corresponding folder name)
+8) `--split`: `equal` (`equal` will ensure roughly the same ratio of disks to bulges to indeterminates across subsets --- look for the corresponding part in the source code for `unequal` split)
+Once these parameters are properly set, ran `python PSFGAN-GaMorNet/PSFGAN/data_split.py`.
+Corresponding folders and their associated catalogs will be created.
 #### Artificial AGN creation
 #### Training PSFGAN
 #### Applying trained PSFGAN
