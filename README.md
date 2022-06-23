@@ -43,7 +43,11 @@ Before start, please make sure you have the following directory structure:
 ```bash
 PSFGAN-GaMorNet/
 ├── PSFGAN 
+    ├── config.py
     ├── data_split.py
+    ├── normalizing.py
+    ├── photometry.py
+    ├── roouhsc.py
     └── gal_sim_0_0.25
         └── g-band
             └── raw_data
@@ -53,7 +57,7 @@ PSFGAN-GaMorNet/
 ```
 
 The `PSFGAN-GaMorNet` assumes raw data images are stored (in .fits format) in an `image` folder. There should also be a separate catalog file (in .csv format) that contains necessary information of each image. (Please refer to these files for detailed information)
-In this guide, we will use $150,000$ simulated galaxies (which were created w.r.t. $0<z<0.25$ real galaxies in HSC Wide Survey) as example.
+In this guide, we will use $150,000$ simulated galaxies (which were created w.r.t. 0<z<0.25 real galaxies in HSC Wide Survey) as example.
 #### Data splitting
 The first step is to split raw data images into five subsets:
 1) `fits_train` (training set for `PSFGAN`)
