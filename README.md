@@ -1,5 +1,23 @@
 # PSFGAN-GaMorNet
 This repository contains source code for the `PSFGAN-GaMorNet` framework (discussed in "Using Machine Learning to Determine Morphologies of $z<1$ AGN Host Galaxies in the Hyper Suprime-Cam Wide Survey").
+## CONTENTS
+```bash
+PSFGAN-GaMorNet
+    ├── CONTENTS
+    ├── Dependencies
+    ├── Installation
+    └── A comprehensive guide to using PSFGAN-GaMorNet
+        ├── Introduction
+        ├── Initial training with simulated galaxies
+            ├── Data splitting
+            ├── Artificial AGN creation
+            ├── Training PSFGAN
+            ├── Applying trained PSFGAN
+            ├── Generating morphological labels
+            └── Training GaMorNet
+        ├── Transfer learning with real galaxies
+        └── Applying on real AGN
+```
 ## Dependencies
 `Linux` or `OSX`
 
@@ -35,6 +53,7 @@ PSFGAN-GaMorNet/
 ```
 
 The `PSFGAN-GaMorNet` assumes raw data images are stored (in .fits format) in an `image` folder. There should also be a separate catalog file (in .csv format) that contains necessary information of each image. (Please refer to these files for detailed information)
+In this guide, we will use simulated galaxies (which were created 
 #### Data splitting
 
 
