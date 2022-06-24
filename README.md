@@ -44,18 +44,23 @@ Before start, please make sure you have the following directory structure:
 PSFGAN-GaMorNet/
 ├── PSFGAN 
     ├── config.py
+    ├── data.py
     ├── data_split.py
     ├── galfit.py
+    ├── model.py
     ├── normalizing.py
     ├── photometry.py
     ├── roouhsc.py
+    ├── train.py
+    ├── utils.py
     └── gal_sim_0_0.25
         └── g-band
+            ├── catalog_star.csv
             ├── fits_star
-            ├── raw_data
+            └── raw_data
                 ├── images
                 └── sim_para_all.csv
-            └── catalog_star.csv
+             
 └── GaMorNet
 ```
 
@@ -118,6 +123,29 @@ Corresponding folders and associated catalogs will be created.
 
 Normalized simulated galaxies and simulated AGN are stored (in .npy format) in corresponding folders under ` PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/npy_input/`. So as their associated catalogs.
 #### Training PSFGAN
+Now we start training a version of PSFGAN from scratch using (normalized) simulated galaxies/AGN.
+
+Relevant parameters and settings:
+
+In `config.py`:
+- `learning_rate`: `0.00005` (we suggest to use `0.00005` for this particular dataset, yet please feel free to explore other values)
+- `attention_parameter`: `0.05` (it governs the relative importance of the central focused region in loss calculation --- see below)
+- `model_path`: `''` (during training, the model path **must** be an empty string)
+- `start_epoch` and `max_epoch`: `0` and `20` (that is, to train for `20` epochs)
+- `img_size`: `239`
+- `train_size`: `239`
+
+Other parameters should be kept the same as in the previous step.
+
+In `model.py`:
+- `self.image_11`: `tf.slice(self.image, [0, 108, 108, 0], [1, 22, 22, conf.img_channel])`
+- `self.cond_11`: `tf.slice(self.cond, [0, 108, 108, 0], [1, 22, 22, conf.img_channel])`
+- `self.g_img_11`: `tf.slice(self.gen_img, [0, 108, 108, 0], [1, 22, 22, conf.img_channel])`
+
+This sets a square region between pixel `[108, 108]` and pixel `[130, 130]`. When calculating the loss, pixels within this region will be treated `1/attention_parameter` times more important than generic pixels on the entire image. In the paper, we refer to this region as **"attention window"**.
+
+Besides, in `generator(self, cond)`, you may want to 
+
 #### Applying trained PSFGAN
 #### Generating morphological labels
 #### Training GaMorNet
