@@ -150,7 +150,9 @@ Once they are properly set, in a `Python 2.7` environment, ran `python PSFGAN-Ga
 
 Trained model (maximum epoch) will be saved in `PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/model/ `.
 
-Application results of trained model (individual epochs) on corresponding validation data will be saved under `PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/PSFGAN_output/`. You may want to change `.../PSFGAN_output/` to a different name since application results on test data will also be saved in the same location.
+Application results of trained model (individual epochs) on corresponding validation data will be saved under `PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/PSFGAN_output/`. 
+
+**Remember to change `.../PSFGAN_output/` to a different name since application results on test data will also be saved in the same location.**
 #### Applying trained PSFGAN
 #### Generating morphological labels
 #### Training GaMorNet
