@@ -51,6 +51,7 @@ PSFGAN-GaMorNet/
     ├── normalizing.py
     ├── photometry.py
     ├── roouhsc.py
+    ├── test.py
     ├── train.py
     ├── utils.py
     └── gal_sim_0_0.25
@@ -148,11 +149,23 @@ Besides, in `discriminator(self, img, cond, reuse)` and `generator(self, cond)`,
 
 Once they are properly set, in a `Python 2.7` environment, ran `python PSFGAN-GaMorNet/PSFGAN/train.py` to train a new version of PSFGAN from scratch using corresponding training data of simulated galaxies/AGN created in the previous step.
 
-Trained model (maximum epoch) will be saved in `PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/model/ `.
+The trained model will be saved in `PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/model/ `.
 
 Application results of trained model (individual epochs) on corresponding validation data will be saved under `PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/PSFGAN_output/`. 
 
 **Remember to change `.../PSFGAN_output/` to a different name since application results on test data will also be saved in the same location.**
 #### Applying trained PSFGAN
+Now it's time to apply the trained PSFGAN on the training/validation sets for `GaMorNet` and the common test set. We need to remove the added AGN point sources for these subsets with the aid of PSFGAN.
+
+Set the following parameters before proceed:
+In `config.py`:
+- `model_path`: `PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/model/model.ckpt` (location of the trained model)
+- `test_epoch`: `20` (by default, this should equal to `max_epoch` --- assuming we want to apply the trained model at the maximum epoch)
+
+Then, please make sure path `PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/PSFGAN_output/` is empty. 
+
+Ran `python PSFGAN-GaMorNet/PSFGAN/test.py --mode gmn_train` to apply the trained model on the training set for `GaMorNet`. Change `.../PSFGAN_output/` to another name (e.g. `.../PSFGAN_output_gmn_train/`) to make sure path `PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/PSFGAN_output/` is kept empty. 
+
+Repeat this step with mode `gmn_train`  (`test`) to apply the trained model on the validation set for `GaMorNet` (common test set). Change the folder name after each time of application.
 #### Generating morphological labels
 #### Training GaMorNet
