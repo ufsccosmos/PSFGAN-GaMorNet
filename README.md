@@ -89,6 +89,7 @@ There should also be a separate catalog file, `catalog_star.csv`, that contains 
 (Please refer to these files for detailed information)
 
 Certain parameters need to be properly set before we proceed:
+
 In `config.py`:
 1) `redshift`:  `gal_sim_0_0.25` (name of the source of our data)
 2) `filters_`: `['g']` (filter(s) of data images)
