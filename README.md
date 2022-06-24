@@ -45,14 +45,17 @@ PSFGAN-GaMorNet/
 ├── PSFGAN 
     ├── config.py
     ├── data_split.py
+    ├── galfit.py
     ├── normalizing.py
     ├── photometry.py
     ├── roouhsc.py
     └── gal_sim_0_0.25
         └── g-band
-            └── raw_data
+            ├── fits_star
+            ├── raw_data
                 ├── images
                 └── sim_para_all.csv
+            └── catalog_star.csv
 └── GaMorNet
 ```
 
@@ -78,6 +81,11 @@ To do so, we will need to use `data_split.py`. Set the following parameters to c
 Once these parameters are properly set, ran `python PSFGAN-GaMorNet/PSFGAN/data_split.py`.
 Corresponding folders and their associated catalogs will be created.
 #### Artificial AGN creation
+The next step is to create artificial AGN point sources, add them with simulated galaxies, and normalize all of these images using the chosen stretch function.
+
+The `PSFGAN-GaMorNet` assumes star images (used to create AGN PS) are stored (in .fits format) in a `fits_star` folder.
+There should also be a separate catalog file called `catalog_star.csv` that contains necessary information of each star.
+(Please refer to these files for detailed information)
 #### Training PSFGAN
 #### Applying trained PSFGAN
 #### Generating morphological labels
