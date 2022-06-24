@@ -81,7 +81,7 @@ To do so, we will need to use `data_split.py`. Set the following parameters to c
 - `desired_shape`: `[239, 239]` (desired shape of output images in pixels)
 - `--gmn_train`, `--gmn_eval`, `--psf_train`, `--psf_eval`, and `--test`: set their default values to numbers of images you want each subset to have (they should sum up to $150,000$, the number of images in `raw_data` of `gal_sim_0_0.25`)
 - `--shuffle`: `1` (`1` to shuffle images before splitting, `0` otherwise)
-- `--source`: `gal_sim_0_0.25` (name of the source of the raw data --- this should be the same of the corresponding folder name)
+- `--source`: `'gal_sim_0_0.25'` (name of the source of the raw data --- this should be the same of the corresponding folder name)
 - `--split`: `equal` (`equal` will ensure roughly the same ratio of disks to bulges to indeterminates across subsets --- look for the corresponding part in the source code for `unequal` split)
 
 Once these parameters are properly set, ran `python PSFGAN-GaMorNet/PSFGAN/data_split.py`.
@@ -96,7 +96,7 @@ There should also be a separate catalog file, `catalog_star.csv`, that contains 
 Certain parameters need to be properly set before we proceed:
 
 In `config.py`:
-- `redshift`:  `gal_sim_0_0.25` (name of the source of our data)
+- `redshift`:  `'gal_sim_0_0.25'` (name of the source of our data)
 - `filters_`: `['g']` (filter(s) of data images)
 - `stretch_type` and `scale_factor`: `'asinh'` and `50` (we suggest to use these values to start --- feel free to change as you wish)
 - `if redshift == 'gal_sim_0_0.25':` then `pixel_max_value`: `25000` (the largest pixel value allowed (pre-normliazation)) **Once this value is chosen it should be fixed for the entire dataset** `gal_sim_0_0.25`. This value (`25000`) is adequate for `gal_sim_0_0.25`. If you are using your own data, please make sure no pixel value (pre-normliazation) is larger than `pixel_max_value`, and `pixel_max_value` is not far larger than the maximum pixel value (pre-normliazation).
@@ -105,7 +105,7 @@ In `config.py`:
 - `num_star_per_psf`: `50` (how many stars you want to use to create each artificial AGN PS)
 
 In `roouhsc.py`:
-- `--source`: 'gal_sim_0_0.25' (name of the source of the data --- this should be the same of the corresponding folder name)
+- `--source`: `'gal_sim_0_0.25'` (name of the source of the data --- this should be the same of the corresponding folder name)
 - `--crop`: `0` (set this to be zero so images are not cropped during normalization)
 - `--save_psf`: `0` (whether to save created artificial AGN point sources. `0`: No; `1`: Yes)
 - `--save_raw_input`: `1` (whether to save created simulated AGN (simulated galaxies + added AGN point sources). `0`: No; `1`: Yes)
@@ -144,8 +144,13 @@ In `model.py`:
 
 This sets a square region between pixel `[108, 108]` and pixel `[130, 130]`. When calculating the loss, pixels within this region will be treated `1/attention_parameter` times more important than generic pixels on the entire image. In the paper, we refer to this region as **"attention window"**.
 
-Besides, in `generator(self, cond)`, you may want to 
+Besides, in `discriminator(self, img, cond, reuse)` and `generator(self, cond)`, you may want to modify their structures. The default structure is suitable for `gal_sim_0_0.25`.
 
+Once they are properly set, in a `Python 2.7` environment, ran `python PSFGAN-GaMorNet/PSFGAN/train.py` to train a new version of PSFGAN from scratch using corresponding training data of simulated galaxies/AGN created in the previous step.
+
+Trained model (maximum epoch) will be saved in `PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/model/ `.
+
+Application results of trained model (individual epochs) on corresponding validation data will be saved under `PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/PSFGAN_output/`. You may want to change `.../PSFGAN_output/` to a different name since application results on test data will also be saved in the same location.
 #### Applying trained PSFGAN
 #### Generating morphological labels
 #### Training GaMorNet
