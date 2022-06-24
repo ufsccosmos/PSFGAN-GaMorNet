@@ -10,7 +10,7 @@ PSFGAN-GaMorNet
         ├── Introduction
         ├── Initial training with simulated galaxies
             ├── Data splitting
-            ├── Artificial AGN creation
+            ├── Simulated AGN creation
             ├── Training PSFGAN
             ├── Applying trained PSFGAN
             ├── Generating morphological labels
