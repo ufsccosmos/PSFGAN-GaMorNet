@@ -43,6 +43,7 @@ Before start, please make sure you have the following directory structure:
 ```bash
 PSFGAN-GaMorNet/
 ├── PSFGAN 
+    ├── add_label.py
     ├── config.py
     ├── data.py
     ├── data_split.py
@@ -122,9 +123,9 @@ python PSFGAN-GaMorNet/PSFGAN/roouhsc_agn.py --mode 4
 
 Corresponding folders and associated catalogs will be created. 
 
-Normalized simulated galaxies and simulated AGN are stored (in .npy format) in corresponding folders under ` PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/npy_input/`. So as their associated catalogs.
+Normalized simulated galaxies and simulated AGN are stored (in .npy format) in corresponding folders under `PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/npy_input/`. So as their associated catalogs.
 #### Training PSFGAN
-Now we start training a version of PSFGAN from scratch using (normalized) simulated galaxies/AGN.
+Now we start training a version of `PSFGAN` from scratch using (normalized) simulated galaxies/AGN.
 
 Relevant parameters and settings:
 
@@ -147,7 +148,7 @@ This sets a square region between pixel `[108, 108]` and pixel `[130, 130]`. Whe
 
 Besides, in `discriminator(self, img, cond, reuse)` and `generator(self, cond)`, you may want to modify their structures. The default structure is suitable for `gal_sim_0_0.25`.
 
-Once they are properly set, in a `Python 2.7` environment, ran `python PSFGAN-GaMorNet/PSFGAN/train.py` to train a new version of PSFGAN from scratch using corresponding training data of simulated galaxies/AGN created in the previous step.
+Once they are properly set, in a `Python 2.7` environment, ran `python PSFGAN-GaMorNet/PSFGAN/train.py` to train a new version of `PSFGAN` from scratch using corresponding training data of simulated galaxies/AGN created in the previous step.
 
 The trained model will be saved in `PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/model/ `.
 
@@ -155,7 +156,7 @@ Application results of trained model (individual epochs) on corresponding valida
 
 **Remember to change `.../PSFGAN_output/` to a different name since application results on test data will also be saved in the same location.**
 #### Applying trained PSFGAN
-Now it's time to apply the trained PSFGAN on the training/validation sets for `GaMorNet` and the common test set. We need to remove the added AGN point sources for these subsets with the aid of PSFGAN.
+Now it's time to apply the trained `PSFGAN` on the training/validation sets for `GaMorNet` and the common test set. We need to remove the added AGN point sources for these subsets with the aid of `PSFGAN`.
 
 Set the following parameters before proceed:
 In `config.py`:
@@ -168,4 +169,17 @@ Ran `python PSFGAN-GaMorNet/PSFGAN/test.py --mode gmn_train` to apply the traine
 
 Repeat this step with mode `gmn_train`  (`test`) to apply the trained model on the validation set for `GaMorNet` (common test set). Change the folder name after each time of application.
 #### Generating morphological labels
+Before training `GaMorNet`, one should create morphologcial labels for galaxies in the training/validation sets for `GaMorNet` and the common test set, using relevant parameters in corresponding catalogs. 
+
+To do so, simply ran the following:
+
+```bash
+python /gpfs/loomis/project/urry/ct564/HSC/data/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/npy_input/catalog_gmn_train_npy_input.csv' --source 'gal_sim_0_0.25' 
+python /gpfs/loomis/project/urry/ct564/HSC/data/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/npy_input/catalog_gmn_eval_npy_input.csv' --source 'gal_sim_0_0.25' 
+python /gpfs/loomis/project/urry/ct564/HSC/data/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/npy_input/catalog_test_npy_input.csv' --source 'gal_sim_0_0.25' 
+```
+
+These commends will create new catalogs based on original catalogs. Each new catalog will contain three additional columns: `is_disk`, `is_indeterminate`, and `is_bulge`.
+
+Please refer to the paper for exact rules we used in morphologcial label creation.
 #### Training GaMorNet
