@@ -78,14 +78,44 @@ To do so, we will need to use `data_split.py`. Set the following parameters to c
 6) `--shuffle`: `1` (`1` to shuffle images before splitting, `0` otherwise)
 7) `--source`: `gal_sim_0_0.25` (name of the source of the raw data --- this should be the same of the corresponding folder name)
 8) `--split`: `equal` (`equal` will ensure roughly the same ratio of disks to bulges to indeterminates across subsets --- look for the corresponding part in the source code for `unequal` split)
+
 Once these parameters are properly set, ran `python PSFGAN-GaMorNet/PSFGAN/data_split.py`.
 Corresponding folders and their associated catalogs will be created.
-#### Artificial AGN creation
+#### Simulated AGN creation
 The next step is to create artificial AGN point sources, add them with simulated galaxies, and normalize all of these images using the chosen stretch function.
 
 The `PSFGAN-GaMorNet` assumes star images (used to create AGN PS) are stored (in .fits format) in a `fits_star` folder.
-There should also be a separate catalog file called `catalog_star.csv` that contains necessary information of each star.
+There should also be a separate catalog file, `catalog_star.csv`, that contains necessary information of each star.
 (Please refer to these files for detailed information)
+
+Certain parameters need to be properly set before we proceed:
+In `config.py`:
+1) `redshift`:  `gal_sim_0_0.25` (name of the source of our data)
+2) `filters_`: `['g']` (filter(s) of data images)
+3) `stretch_type` and `scale_factor`: `'asinh'` and `50` (we suggest to use these values to start --- feel free to change as you wish)
+4) `if redshift == 'gal_sim_0_0.25':` then `pixel_max_value`: `25000` (the largest pixel value allowed (pre-normliazation)) **Once this value is chosen it should be fixed for the entire dataset** `gal_sim_0_0.25`. This value (`25000`) is adequate for `gal_sim_0_0.25`. If you are using your own data, please make sure no pixel value (pre-normliazation) is larger than `pixel_max_value`, and `pixel_max_value` is not far larger than the maximum pixel value (pre-normliazation).
+5) `max_contrast_ratio` and `min_contrast_ratio`: `3.981` and `0.1` (what they do are self-evident)
+6) `uniform_logspace`: `True` (contrast ratios will be uniformly distributed in logspace if this is `True`, or they will be uniformly distributed in linearspace if this is `False`)
+7) `num_star_per_psf`: `50` (how many stars you want to use to create each artificial AGN PS)
+
+In `roouhsc.py`:
+1) `--source`: 'gal_sim_0_0.25' (name of the source of the data --- this should be the same of the corresponding folder name)
+2) `--crop`: `0` (set this to be zero so images are not cropped during normalization)
+3) `--save_psf`: `0` (whether to save created artificial AGN point sources. `0`: No; `1`: Yes)
+4) `--save_raw_input`: `1` (whether to save created simulated AGN (simulated galaxies + added AGN point sources). `0`: No; `1`: Yes)
+
+Once all parameters are set, ran the following to create simulated AGN (and normalize all images using the chosen stretch function) for all five subsets:
+```bash
+python PSFGAN-GaMorNet/PSFGAN/roouhsc_agn.py --mode 0
+python PSFGAN-GaMorNet/PSFGAN/roouhsc_agn.py --mode 1
+python PSFGAN-GaMorNet/PSFGAN/roouhsc_agn.py --mode 2
+python PSFGAN-GaMorNet/PSFGAN/roouhsc_agn.py --mode 3
+python PSFGAN-GaMorNet/PSFGAN/roouhsc_agn.py --mode 4
+```
+
+Corresponding folders and associated catalogs will be created. 
+
+Normalized simulated galaxies and simulated AGN are stored (in .npy format) in corresponding folders under ` PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/npy_input/`. So as their associated catalogs.
 #### Training PSFGAN
 #### Applying trained PSFGAN
 #### Generating morphological labels
