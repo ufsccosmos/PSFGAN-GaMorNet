@@ -219,7 +219,19 @@ Then, we should set a few parameters:
 - `img_center`: `[119, 119]` (location of the user-defined central pixel)
 
 And paths:
-- `train_set`: `'PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/PSFGAN_output_gmn_train/epoch_20/fits_output/' % filter_string` (location of the training set for `GaMorNet` --- **assuming you have changed corresponding folder name as mentioned in previous steps**)
+- `train_set`: `'PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/PSFGAN_output_gmn_train/epoch_20/fits_output/' % filter_string` (location of the training set for `GaMorNet`, recovered galaxies --- **assuming you have changed the corresponding folder name as mentioned in previous steps**)
 - `train_catalog`: `pandas.read_csv(glob.glob('PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/asinh_50/npy_input/catalog_gmn_train_npy_input_labeled.csv' % filter_string)[0])` (location of the corresponding catalog of the training set for `GaMorNet` --- **please make sure to use the morphologically labelled version!**)
+- `eval_set`: `'PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/PSFGAN_output_gmn_eval/epoch_20/fits_output/' % filter_string` (location of the validation set for `GaMorNet`, recovered galaxies --- **assuming you have changed the corresponding folder name as mentioned in previous steps**)
+- `eval_catalog`: `pandas.read_csv(glob.glob('PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/asinh_50/npy_input/catalog_gmn_eval_npy_input_labeled.csv' % filter_string)[0])` (location of the corresponding catalog of the validation set for `GaMorNet` --- **please make sure to use the morphologically labelled version!**)
+- `pre_psf`: `'PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/fits_test/' % filter_string` (location of the common test set, original galaxies)
+- `post_psf`: `'PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/PSFGAN_output_test/epoch_20/fits_output/' % filter_string` (location of the common test set, recovered galaxies --- **assuming you have changed the corresponding folder name as mentioned in previous steps**)
+- `cond_input`: `'PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/fits_test_condinput/' % filter_string` (location of the common test set, original galaxies + AGN point sources --- **assuming you have saved the simulated AGN as suggested in previous steps**)
+- `test_catalog`: `pandas.read_csv(glob.glob('PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/asinh_50/npy_input/catalog_test_npy_input_labeled.csv' % filter_string)[0])` (location of the corresponding catalog of the common test set --- **please make sure to use the morphologically labelled version!**)
+
+
+
+
+
+
 
 
