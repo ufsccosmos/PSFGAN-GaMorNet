@@ -16,6 +16,12 @@ PSFGAN-GaMorNet
             ├── Generating morphological labels
             └── Training and applying GaMorNet
         ├── Transfer learning with real galaxies
+            ├── Data splitting
+            ├── Simulated AGN creation
+            ├── Training PSFGAN
+            ├── Applying trained PSFGAN
+            ├── Generating morphological labels
+            └── Fine-tuning and applying GaMorNet
         └── Applying on real AGN
 ```
 ## Dependencies
@@ -339,5 +345,13 @@ save_labels(pre_prediction_labels=pre_prediction_labels, post_prediction_labels=
             catalog_folder={where you want to create a catalog containing model outputs})
 ```
 
+### Transfer learning with real galaxies
+
+#### Data splitting
+#### Simulated AGN creation
+#### Training PSFGAN
+#### Applying trained PSFGAN
+#### Generating morphological labels
+#### Fine-tuning and applying GaMorNet
 
 
