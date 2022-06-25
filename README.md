@@ -77,7 +77,8 @@ PSFGAN-GaMorNet/
 ```
 
 The `PSFGAN-GaMorNet` assumes raw data images are stored (in .fits format) in an `image` folder. There should also be a separate catalog file (in .csv format) that contains necessary information of each image. (Please refer to these files for detailed information)
-In this guide, we will use $150,000$ simulated galaxies (which were created w.r.t. 0<z<0.25 real galaxies in HSC Wide Survey) as example.
+
+We will use $150,000$ simulated galaxies (which were created w.r.t. 0<z<0.25 real galaxies in HSC Wide Survey) as example.
 #### Data splitting
 The first step is to split raw data images into five subsets:
 - `fits_train` (training set for `PSFGAN`)
@@ -348,7 +349,7 @@ save_labels(pre_prediction_labels=pre_prediction_labels, post_prediction_labels=
 ```
 
 ### Transfer learning with real galaxies
-In this section, we will illustrate details in training multi-band PSFGAN and fine-tuning previously trained GaMorNet, all using real galaxies (realistic simulated AGN).
+In this section, we will illustrate details in training multi-band `PSFGAN` and fine-tuning previously trained `GaMorNet`, all using real galaxies (realistic simulated AGN).
 
 Before proceed, please familarize yourself about the "Initial training with simulated galaxies" section. Since there is a huge overlap, we will not go over every detail. Instead, we will highlight their difference (whenever there is one).
 
@@ -390,7 +391,7 @@ PSFGAN-GaMorNet/
 
 Note that each real galaxy has images in five HSC Wide filters: `g`, `r`, `i`, `z`, and `y`. Please refer to image files and catalogs for detailed information.
 
-In this guide, we will use $50,873$ real galaxies (mostly with $z<0.25$) selected from [Simard et al. (2011)](https://iopscience.iop.org/article/10.1088/0067-0049/196/1/11/pdf) (which are also imaged in HSC Wide Survey) as example.
+We will use $50,873$ real galaxies (mostly with $z<0.25$) selected from [Simard et al. (2011)](https://iopscience.iop.org/article/10.1088/0067-0049/196/1/11/pdf) (which are also imaged in HSC Wide Survey) as example.
 #### Data splitting
 #### Simulated AGN creation
 #### Training PSFGAN
