@@ -196,7 +196,7 @@ These commends will create new catalogs based on original catalogs. Each new cat
 
 Please refer to the paper for exact rules we used in morphologcial label creation.
 #### Training and applying GaMorNet
-Now we start training a version of `GaMorNet` from scratch using (normalized) recovered host galaxies in `gmn_train`.
+Now we start training a version of `GaMorNet` from scratch using (normalized) recovered (simulated) host galaxies in `gmn_train`.
 
 Notes: 
 1) Please use a `Python 3.6` environment for `GaMorNet` related tasks.
@@ -231,9 +231,9 @@ Training and validation set paths:
 - `train_set`: `'PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/PSFGAN_output_gmn_train/epoch_20/fits_output/' % filter_string` (location of the training set for `GaMorNet`, recovered galaxies --- **assuming you have changed the corresponding folder name as mentioned in previous steps**)
 - `train_catalog`: `pandas.read_csv(glob.glob('PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/asinh_50/npy_input/catalog_gmn_train_npy_input_labeled.csv' % filter_string)[0])` (location of the corresponding catalog of the training set for `GaMorNet` --- **please make sure to use the morphologically labelled version!**)
 - `eval_set`: `'PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/PSFGAN_output_gmn_eval/epoch_20/fits_output/' % filter_string` (location of the validation set for `GaMorNet`, recovered galaxies --- **assuming you have changed the corresponding folder name as mentioned in previous steps**)
+- `eval_catalog`: `pandas.read_csv(glob.glob('PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/asinh_50/npy_input/catalog_gmn_eval_npy_input_labeled.csv' % filter_string)[0])` (location of the corresponding catalog of the validation set for `GaMorNet` --- **please make sure to use the morphologically labelled version!**)
 
 And the common test set paths:
-- `eval_catalog`: `pandas.read_csv(glob.glob('PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/asinh_50/npy_input/catalog_gmn_eval_npy_input_labeled.csv' % filter_string)[0])` (location of the corresponding catalog of the validation set for `GaMorNet` --- **please make sure to use the morphologically labelled version!**)
 - `pre_psf`: `'PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/fits_test/' % filter_string` (location of the common test set, original galaxies)
 - `post_psf`: `'PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/PSFGAN_output_test/epoch_20/fits_output/' % filter_string` (location of the common test set, recovered galaxies --- **assuming you have changed the corresponding folder name as mentioned in previous steps**)
 - `cond_input`: `'PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/fits_test_condinput/' % filter_string` (location of the common test set, original galaxies + AGN point sources --- **assuming you have saved the simulated AGN as suggested in previous steps**)
@@ -495,22 +495,108 @@ python PSFGAN-GaMorNet/PSFGAN/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/
 
 Please refer to the paper for exact rules we used in morphologcial label creation.
 #### Fine-tuning and applying GaMorNet
+Now we start fine-tuning the version of `GaMorNet` previously trained from scratch in the "Initial training with simulated galaxies" section, using (normalized) recovered (real) host galaxies in `gmn_train`.
 
+Notes: 
+1) Please use a `Python 3.6` environment for `GaMorNet` related tasks.
+2) Install appropriate versions of `CUDA` and `cuDNN` if you are using a `GPU`. 
+3) In our experiment, we used `Python 3.6.12` with `cuDNN 7.6.2.24` and `CUDA 10.0.130`.
+4) See [GaMorNet Tutorial Pages about GPU](https://gamornet.readthedocs.io/en/latest/getting_started.html#gpu-support) for more information.
 
+To start, please find the `main.py` file under `PSFGAN-GaMorNet/GaMorNet/`. 
 
+In `main.py`:
 
+If you are using a `GPU`, ran the following before loading `GaMorNet` modules:
+```bash
+### Preparation
+# First, we will check whether we have access to a GPU (required by the GPU version GaMorNet)
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+if tf.test.gpu_device_name() != '/device:GPU:0':
+  print('WARNING: GPU device not found.')
+else:
+  print('SUCCESS: Found GPU: {}'.format(tf.test.gpu_device_name()))
 
+print(tf.__version__)
+print(gamornet.__version__)
+```
 
+Please be aware that although we used a multi-band `PSFGAN`, `GaMorNet` is single-band by design. **Please ran the following steps for each of the five filters (or for a subset of filters you're interested).**
 
+Set a few parameters:
+- `filter_string`: `{filter}` (e.g. `'g'`, `'r'`, etc.)
+- `image_shape`: `[239, 239]` 
+- `img_center`: `[119, 119]`
 
+Then, set training set, validation set, and common test set paths accordingly, in the chosen filter-subfolder.
 
+Once these parameters and paths are properly set, load all functions needed.
 
+Then, we are ready to invoke `GaMorNet`.
 
+Load data: (**please change row number limits accordingly if you are using a different split than the one described in the paper.**)
+```bash
+radius = 0.0
+type = ''
 
+# Load data
+# For simard
+training_imgs, training_labels = load_train_data(row_num_limits=[0, 32400], radius=radius, type=type)
+validation_imgs, validation_labels = load_eval_data(row_num_limits=[0, 3600], radius=radius, type=type)
+```
 
+Fine-tune the previously learned model:
+```bash
+previous_model_folder = '{location of the previously trained model folder}'
+tl_model_folder = '{destination folder --- fine-tuned model will be saved there}'
+if not os.path.exists(tl_model_folder):
+    os.makedirs(tl_model_folder)
+gamornet_tl_keras(training_imgs=training_imgs, training_labels=training_labels, validation_imgs=validation_imgs, validation_labels=validation_labels,
+                  input_shape=(239, 239, 1),
+                  load_layers_bools=[True, True, True, True, True, True, True, True],
+                  trainable_bools=[False, False, False, True, True, True, True, True],
+                  model_load_path=previous_model_folder+'trained_model.hdf5',
+                  files_save_path=tl_model_folder,
+                  epochs=200, checkpoint_freq=0,
+                  batch_size=128, lr=5e-05, momentum=0.9, decay=0.0, nesterov=False, loss='categorical_crossentropy',
+                  save_model=True, verbose=2)
+```
+Note: for arguments in 'gamornet_train_keras', please refer to [GaMorNet API Documentation](https://gamornet.readthedocs.io/en/latest/api_docs.html#module-gamornet.tflearn_module) for more information.
 
+Apply the model: (**please change row number limits accordingly if you are using a different split than the one described in the paper.**)
+```bash
+# Load pre and post PSFGAN results along with conditional inputs
+pre_imgs = load_pre_psf(row_num_limits=[0, 9000], radius=radius, type=type)
+post_imgs = load_post_psf(row_num_limits=[0, 9000], radius=radius, type=type)
+cond_imgs = load_cond_inputs(row_num_limits=[0, 9000], radius=radius, type=type)
+rsdl_imgs = post_imgs - pre_imgs
+```
 
+```bash
+# Use the model to make prediction
+test_model ='{location of the fine-tuned model folder}/trained_model.hdf5'
+pre_prediction_labels = gamornet_predict_keras(img_array=pre_imgs,
+                                                 model_load_path=test_model,
+                                                 input_shape=(image_shape[0], image_shape[1], 1),
+                                                 batch_size=64, individual_arrays=False)
+post_prediction_labels = gamornet_predict_keras(img_array=post_imgs,
+                                                  model_load_path=test_model,
+                                                  input_shape=(image_shape[0], image_shape[1], 1),
+                                                  batch_size=64, individual_arrays=False)
+cond_prediction_labels = gamornet_predict_keras(img_array=cond_imgs,
+                                                  model_load_path=test_model,
+                                                  input_shape=(image_shape[0], image_shape[1], 1),
+                                                  batch_size=64, individual_arrays=False)
+```
 
+At last, save their outputs:
+```bash
+## Save the prediction labels together with the test catalog (creating a new catalog)
+# Remember to set the catalog folder.
+save_labels(pre_prediction_labels=pre_prediction_labels, post_prediction_labels=post_prediction_labels,
+            cond_prediction_labels=cond_prediction_labels, radius=radius, type=type,
+            catalog_folder={where you want to create a catalog containing model outputs})
+```
 
 
 
