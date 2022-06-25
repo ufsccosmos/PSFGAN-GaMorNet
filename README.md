@@ -470,6 +470,30 @@ Then, please make sure path `PSFGAN-GaMorNet/PSFGAN/simard/{filter}-band/asinh_5
 
 You can now use command `python PSFGAN-GaMorNet/PSFGAN/test.py --mode gmn_train` and two other commands for `--mode gmn_eval` and `--mode test` to apply the trained model to remove added AGN point sources for `GaMorNet` and for the common test set. Change the according path names as in the "Initial training with simulated galaxies" section. **The only difference is that one needs to change folder names and keep original paths empty in all FIVE filter-subfolders.**
 #### Generating morphological labels
+Ran the following to create morphological labels for each filter-subfolder:
+```bash
+python PSFGAN-GaMorNet/PSFGAN/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/simard/g-band/asinh_50/npy_input/catalog_gmn_train_npy_input.csv' --source 'simard' --use_label 'n'
+python PSFGAN-GaMorNet/PSFGAN/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/simard/g-band/asinh_50/npy_input/catalog_gmn_eval_npy_input.csv' --source 'simard' --use_label 'n'
+python PSFGAN-GaMorNet/PSFGAN/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/simard/g-band/asinh_50/npy_input/catalog_test_npy_input.csv' --source 'simard' --use_label 'n'
+
+python PSFGAN-GaMorNet/PSFGAN/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/simard/r-band/asinh_50/npy_input/catalog_gmn_train_npy_input.csv' --source 'simard' --use_label 'n'
+python PSFGAN-GaMorNet/PSFGAN/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/simard/r-band/asinh_50/npy_input/catalog_gmn_eval_npy_input.csv' --source 'simard' --use_label 'n'
+python PSFGAN-GaMorNet/PSFGAN/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/simard/r-band/asinh_50/npy_input/catalog_test_npy_input.csv' --source 'simard' --use_label 'n'
+
+python PSFGAN-GaMorNet/PSFGAN/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/simard/i-band/asinh_50/npy_input/catalog_gmn_train_npy_input.csv' --source 'simard' --use_label 'n'
+python PSFGAN-GaMorNet/PSFGAN/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/simard/i-band/asinh_50/npy_input/catalog_gmn_eval_npy_input.csv' --source 'simard' --use_label 'n'
+python PSFGAN-GaMorNet/PSFGAN/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/simard/i-band/asinh_50/npy_input/catalog_test_npy_input.csv' --source 'simard' --use_label 'n'
+
+python PSFGAN-GaMorNet/PSFGAN/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/simard/z-band/asinh_50/npy_input/catalog_gmn_train_npy_input.csv' --source 'simard' --use_label 'n'
+python PSFGAN-GaMorNet/PSFGAN/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/simard/z-band/asinh_50/npy_input/catalog_gmn_eval_npy_input.csv' --source 'simard' --use_label 'n'
+python PSFGAN-GaMorNet/PSFGAN/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/simard/z-band/asinh_50/npy_input/catalog_test_npy_input.csv' --source 'simard' --use_label 'n'
+
+python PSFGAN-GaMorNet/PSFGAN/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/simard/y-band/asinh_50/npy_input/catalog_gmn_train_npy_input.csv' --source 'simard' --use_label 'n'
+python PSFGAN-GaMorNet/PSFGAN/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/simard/y-band/asinh_50/npy_input/catalog_gmn_eval_npy_input.csv' --source 'simard' --use_label 'n'
+python PSFGAN-GaMorNet/PSFGAN/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/simard/y-band/asinh_50/npy_input/catalog_test_npy_input.csv' --source 'simard' --use_label 'n'
+```
+
+Please refer to the paper for exact rules we used in morphologcial label creation.
 #### Fine-tuning and applying GaMorNet
 
 
