@@ -153,9 +153,9 @@ In `config.py`:
 Other parameters should be kept the same as in the previous step.
 
 In `model.py`:
-- `self.image_11`: `tf.slice(self.image, [0, 108, 108, 0], [1, 22, 22, conf.img_channel])`
-- `self.cond_11`: `tf.slice(self.cond, [0, 108, 108, 0], [1, 22, 22, conf.img_channel])`
-- `self.g_img_11`: `tf.slice(self.gen_img, [0, 108, 108, 0], [1, 22, 22, conf.img_channel])`
+- `self.image_00`: `tf.slice(self.image, [0, 108, 108, 0], [1, 22, 22, conf.img_channel])`
+- `self.cond_00`: `tf.slice(self.cond, [0, 108, 108, 0], [1, 22, 22, conf.img_channel])`
+- `self.g_img_00`: `tf.slice(self.gen_img, [0, 108, 108, 0], [1, 22, 22, conf.img_channel])`
 
 This sets a square region between pixel `[108, 108]` and pixel `[130, 130]`. When calculating the loss, pixels within this region will be treated `1/attention_parameter` times more important than generic pixels on the entire image. In the paper, we refer to this region as **"attention window"**.
 
@@ -429,8 +429,56 @@ python PSFGAN-GaMorNet/PSFGAN/roouhsc_agn.py --mode 3
 python PSFGAN-GaMorNet/PSFGAN/roouhsc_agn.py --mode 4
 ```
 #### Training PSFGAN
+Now we start training a version of multi-band `PSFGAN` from scratch using (normalized) realistic simulated galaxies/AGN.
+
+Note: please use a `Python 2.7` environment for `PSFGAN` related tasks.
+
+Notes on parameters:
+
+In `config.py`:
+- `learning_rate`: `0.00009` 
+- `attention_parameter`: `0.05` 
+- `model_path`: `''` (during training, the model path **must** be an empty string)
+- `start_epoch` and `max_epoch`: `0` and `20` (that is, to train for `20` epochs)
+- `img_size`: `239`
+- `train_size`: `239`
+
+Other parameters should be kept the same as in the previous step.
+
+In `model.py`:
+- `self.image_00`: `tf.slice(self.image, [0, 108, 108, 0], [1, 22, 22, conf.img_channel])`
+- `self.cond_00`: `tf.slice(self.cond, [0, 108, 108, 0], [1, 22, 22, conf.img_channel])`
+- `self.g_img_00`: `tf.slice(self.gen_img, [0, 108, 108, 0], [1, 22, 22, conf.img_channel])`
+
+Besides, in `discriminator(self, img, cond, reuse)` and `generator(self, cond)`, you may want to modify their structures. The default structure is suitable for an image shape of `[239, 239]`. 
+
+Once they are properly set, ran `python PSFGAN-GaMorNet/PSFGAN/train.py` to train a new version of `PSFGAN` from scratch using corresponding training data of realistic simulated galaxies/AGN created in the previous step.
+
+**Remember to change `.../PSFGAN_output/` to a different name IN EACH FILTER since application results on test data will also be saved in the same locations.**
 #### Applying trained PSFGAN
+
+
+
+
+
 #### Generating morphological labels
 #### Fine-tuning and applying GaMorNet
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
