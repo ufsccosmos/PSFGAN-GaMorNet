@@ -276,7 +276,7 @@ def save_labels(pre_prediction_labels, post_prediction_labels, cond_prediction_l
 
 Then, we are ready to invoke `GaMorNet`.
 
-Load data: (**please change row number limits accordingly if you are using a different split than the one described in the paper**)
+Load data: (**please change row number limits accordingly if you are using a different split than the one described in the paper.**)
 ```bash
 radius = 0.0
 type = ''
@@ -303,6 +303,41 @@ gamornet_train_keras(training_imgs=training_imgs, training_labels=training_label
                      load_model=False, model_load_path='./', save_model=True, verbose=2)
 ```
 Note: for arguments in 'gamornet_train_keras', please refer to [GaMorNet API Documentation](https://gamornet.readthedocs.io/en/latest/api_docs.html#module-gamornet.tflearn_module) for more information.
+
+Apply the model: (**please change row number limits accordingly if you are using a different split than the one described in the paper.**)
+```bash
+# Load pre and post PSFGAN results along with conditional inputs
+pre_imgs = load_pre_psf(row_num_limits=[0, 40000], radius=radius, type=type)
+post_imgs = load_post_psf(row_num_limits=[0, 40000], radius=radius, type=type)
+cond_imgs = load_cond_inputs(row_num_limits=[0, 40000], radius=radius, type=type)
+rsdl_imgs = post_imgs - pre_imgs
+```
+
+```bash
+# Use the model to make prediction
+test_model ='PSFGAN-GaMorNet/GaMorNet/saves/{your favorite folder name}/trained_model.hdf5'
+pre_prediction_labels = gamornet_predict_keras(img_array=pre_imgs,
+                                                 model_load_path=test_model,
+                                                 input_shape=(image_shape[0], image_shape[1], 1),
+                                                 batch_size=64, individual_arrays=False)
+post_prediction_labels = gamornet_predict_keras(img_array=post_imgs,
+                                                  model_load_path=test_model,
+                                                  input_shape=(image_shape[0], image_shape[1], 1),
+                                                  batch_size=64, individual_arrays=False)
+cond_prediction_labels = gamornet_predict_keras(img_array=cond_imgs,
+                                                  model_load_path=test_model,
+                                                  input_shape=(image_shape[0], image_shape[1], 1),
+                                                  batch_size=64, individual_arrays=False)
+```
+
+At last, save their outputs:
+```bash
+## Save the prediction labels together with the test catalog (creating a new catalog)
+# Remember to set the catalog folder.
+save_labels(pre_prediction_labels=pre_prediction_labels, post_prediction_labels=post_prediction_labels,
+            cond_prediction_labels=cond_prediction_labels, radius=radius, type=type,
+            catalog_folder={where you want to create a catalog containing model outputs})
+```
 
 
 
