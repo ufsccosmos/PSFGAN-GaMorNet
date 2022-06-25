@@ -17,7 +17,7 @@ PSFGAN-GaMorNet
             └── Training and applying GaMorNet
         ├── Transfer learning with real galaxies
             ├── Data splitting
-            ├── Simulated AGN creation
+            ├── Realistic simulated AGN creation
             ├── Training PSFGAN
             ├── Applying trained PSFGAN
             ├── Generating morphological labels
@@ -393,7 +393,42 @@ Note that each real galaxy has images in five HSC Wide filters: `g`, `r`, `i`, `
 
 We will use $50,873$ real galaxies (mostly with $z<0.25$) selected from [Simard et al. (2011)](https://iopscience.iop.org/article/10.1088/0067-0049/196/1/11/pdf) (which are also imaged in HSC Wide Survey) as example.
 #### Data splitting
-#### Simulated AGN creation
+Similar as in the "Initial training with simulated galaxies" section. Use `data_split.py` to split data. Set parameters accordingly. Ran `python PSFGAN-GaMorNet/PSFGAN/data_split.py`.
+
+Notes:
+- `filter_strings`: this should now be `['g', 'r', 'i', 'z', 'y']`
+- `desired_shape`: this is still `[239, 239]`
+#### Realistic simulated AGN creation
+The next step is to create artificial AGN point sources, add them with real galaxies, and normalize all of these images using the chosen stretch function. This is similar as in the "Initial training with simulated galaxies" section, except now we have five filters. 
+
+Star images and catalogs have the same format as described in the "Initial training with simulated galaxies" section.
+
+Parameters should be set accordingly. 
+
+Notes:
+
+In `config.py`:
+- `filters_`: this should now be `['g', 'r', 'i', 'z', 'y']`
+- `if redshift == 'simard'`: then `pixel_max_value`: `45000` should be adequate for our dataset **(Once this value is chosen it should be fixed for the entire dataset `simard`)**
+
+Please be aware that in each filter, we can have an individual AGN PS to host galaxy flux contrast ratio. In reality, the five contrast ratios are not independent. Nonetheless, for illustration purposes, we use five independently sampled contrast ratios in our guide. Please modify the corresponding code block accordingly, should you want to use real AGN SEDs (for example) to create realistically mutually-dependent contrast ratios in the five HSC Wide filters.
+- `max_contrast_ratio` and `min_contrast_ratio`: `3.981` and `0.1` 
+- `uniform_logspace`: `True`
+- `num_star_per_psf`: `50`
+
+Set other parameters accordingly.
+
+In `roouhsc.py`:
+Similar as in the "Initial training with simulated galaxies" section. Set them accordingly.
+
+Once all parameters are set, ran the following to create realistic simulated AGN (and normalize all images using the chosen stretch function):
+```bash
+python PSFGAN-GaMorNet/PSFGAN/roouhsc_agn.py --mode 0
+python PSFGAN-GaMorNet/PSFGAN/roouhsc_agn.py --mode 1
+python PSFGAN-GaMorNet/PSFGAN/roouhsc_agn.py --mode 2
+python PSFGAN-GaMorNet/PSFGAN/roouhsc_agn.py --mode 3
+python PSFGAN-GaMorNet/PSFGAN/roouhsc_agn.py --mode 4
+```
 #### Training PSFGAN
 #### Applying trained PSFGAN
 #### Generating morphological labels
