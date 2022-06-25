@@ -14,7 +14,7 @@ PSFGAN-GaMorNet
             ├── Training PSFGAN
             ├── Applying trained PSFGAN
             ├── Generating morphological labels
-            └── Training GaMorNet
+            └── Training and applying GaMorNet
         ├── Transfer learning with real galaxies
         └── Applying on real AGN
 ```
@@ -64,6 +64,8 @@ PSFGAN-GaMorNet/
                 └── sim_para_all.csv
              
 └── GaMorNet
+    ├── main.py
+    └── {other files and folders}
 ```
 
 The `PSFGAN-GaMorNet` assumes raw data images are stored (in .fits format) in an `image` folder. There should also be a separate catalog file (in .csv format) that contains necessary information of each image. (Please refer to these files for detailed information)
@@ -110,7 +112,7 @@ In `roouhsc.py`:
 - `--source`: `'gal_sim_0_0.25'` (name of the source of the data --- this should be the same of the corresponding folder name)
 - `--crop`: `0` (set this to be zero so images are not cropped during normalization)
 - `--save_psf`: `0` (whether to save created artificial AGN point sources. `0`: No; `1`: Yes)
-- `--save_raw_input`: `1` (whether to save created simulated AGN (simulated galaxies + added AGN point sources). `0`: No; `1`: Yes)
+- `--save_raw_input`: `1` (whether to save created simulated AGN (simulated galaxies + added AGN point sources). `0`: No; `1`: Yes. **We suggest to save them.**)
 
 Once all parameters are set, ran the following to create simulated AGN (and normalize all images using the chosen stretch function) for all five subsets:
 ```bash
@@ -184,15 +186,40 @@ python PSFGAN-GaMorNet/PSFGAN/add_label.py --input_path 'PSFGAN-GaMorNet/PSFGAN/
 These commends will create new catalogs based on original catalogs. Each new catalog will contain three additional columns: `is_disk`, `is_indeterminate`, and `is_bulge`.
 
 Please refer to the paper for exact rules we used in morphologcial label creation.
-#### Training GaMorNet
+#### Training and applying GaMorNet
 Now we start training a version of `GaMorNet` from scratch using (normalized) recovered host galaxies in `gmn_train`.
 
 Notes: 
 1) Please use a `Python 3.6` environment for `GaMorNet` related tasks.
 2) Install appropriate versions of `CUDA` and `cuDNN` if you are using a `GPU`. 
-3) In our experiment, we used `Python 3.6.12` along with `cuDNN 7.6.2.24` and `CUDA 10.0.130`.
+3) In our experiment, we used `Python 3.6.12` with `cuDNN 7.6.2.24` and `CUDA 10.0.130`.
 4) See [GaMorNet Tutorial Pages about GPU](https://gamornet.readthedocs.io/en/latest/getting_started.html#gpu-support) for more information.
 
+To start, please find the `main.py` file under `PSFGAN-GaMorNet/GaMorNet/`. Since we can directly load/unload `GaMorNet` modules, we have integrated all necessary `GaMorNet` related operations in this file. 
 
+In `main.py`:
+
+If you are using a `GPU`, ran the following before loading `GaMorNet` modules:
+```bash
+### Preparation
+# First, we will check whether we have access to a GPU (required by the GPU version GaMorNet)
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+if tf.test.gpu_device_name() != '/device:GPU:0':
+  print('WARNING: GPU device not found.')
+else:
+  print('SUCCESS: Found GPU: {}'.format(tf.test.gpu_device_name()))
+
+print(tf.__version__)
+print(gamornet.__version__)
+```
+
+Then, we should set a few parameters:
+- `filter_string`: `'g'` (Note: `GaMorNet` is single-band by design)
+- `image_shape`: `[239, 239]` (should be the same image shape as in previous steps)
+- `img_center`: `[119, 119]` (location of the user-defined central pixel)
+
+And paths:
+- `train_set`: `'PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/PSFGAN_output_gmn_train/epoch_20/fits_output/' % filter_string` (location of the training set for `GaMorNet` --- **assuming you have changed corresponding folder name as mentioned in previous steps**)
+- `train_catalog`: `pandas.read_csv(glob.glob('PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/asinh_50/npy_input/catalog_gmn_train_npy_input_labeled.csv' % filter_string)[0])` (location of the corresponding catalog of the training set for `GaMorNet` --- **please make sure to use the morphologically labelled version!**)
 
 
