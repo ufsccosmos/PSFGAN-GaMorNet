@@ -454,13 +454,21 @@ Besides, in `discriminator(self, img, cond, reuse)` and `generator(self, cond)`,
 
 Once they are properly set, ran `python PSFGAN-GaMorNet/PSFGAN/train.py` to train a new version of `PSFGAN` from scratch using corresponding training data of realistic simulated galaxies/AGN created in the previous step.
 
+Five **identical** copies of the trained multi-band model will be saved in similar locations in each of the five filter-subfolders. 
+
 **Remember to change `.../PSFGAN_output/` to a different name IN EACH FILTER since application results on test data will also be saved in the same locations.**
 #### Applying trained PSFGAN
+Now it's time to apply the trained `PSFGAN` on the training/validation sets for `GaMorNet` and the common test set. We need to remove the added AGN point sources for these subsets with the aid of `PSFGAN`.
 
+Set the following parameters before proceed:
 
+In `config.py`:
+- `model_path`: `PSFGAN-GaMorNet/PSFGAN/simard/g-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_9e-05/model/model.ckpt` (location of the trained model --- you can also change `g-band` to other filter-subfolders since models saved in different filter-subfolders are identical)
+- `test_epoch`: `20` (by default, this should equal to `max_epoch` --- assuming we want to apply the trained model at the maximum epoch)
 
+Then, please make sure path `PSFGAN-GaMorNet/PSFGAN/simard/{filter}-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_9e-05/PSFGAN_output/` is empty for each of the five filters.
 
-
+You can now use command `python PSFGAN-GaMorNet/PSFGAN/test.py --mode gmn_train` and two other commands for `--mode gmn_eval` and `--mode test` to apply the trained model to remove added AGN point sources for `GaMorNet` and for the common test set. Change the according path names as in the "Initial training with simulated galaxies" section. **The only difference is that one needs to change folder names and keep original paths empty in all FIVE filter-subfolders.**
 #### Generating morphological labels
 #### Fine-tuning and applying GaMorNet
 
