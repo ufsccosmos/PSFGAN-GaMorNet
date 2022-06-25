@@ -127,6 +127,8 @@ Normalized simulated galaxies and simulated AGN are stored (in .npy format) in c
 #### Training PSFGAN
 Now we start training a version of `PSFGAN` from scratch using (normalized) simulated galaxies/AGN.
 
+Note: please use a `Python 2.7` environment for `PSFGAN` related tasks.
+
 Relevant parameters and settings:
 
 In `config.py`:
@@ -148,7 +150,7 @@ This sets a square region between pixel `[108, 108]` and pixel `[130, 130]`. Whe
 
 Besides, in `discriminator(self, img, cond, reuse)` and `generator(self, cond)`, you may want to modify their structures. The default structure is suitable for `gal_sim_0_0.25`.
 
-Once they are properly set, in a `Python 2.7` environment, ran `python PSFGAN-GaMorNet/PSFGAN/train.py` to train a new version of `PSFGAN` from scratch using corresponding training data of simulated galaxies/AGN created in the previous step.
+Once they are properly set, ran `python PSFGAN-GaMorNet/PSFGAN/train.py` to train a new version of `PSFGAN` from scratch using corresponding training data of simulated galaxies/AGN created in the previous step.
 
 The trained model will be saved in `PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/g-band/asinh_50/lintrain_classic_PSFGAN_0.05/lr_5e-05/model/ `.
 
@@ -183,3 +185,14 @@ These commends will create new catalogs based on original catalogs. Each new cat
 
 Please refer to the paper for exact rules we used in morphologcial label creation.
 #### Training GaMorNet
+Now we start training a version of `GaMorNet` from scratch using (normalized) recovered host galaxies in `gmn_train`.
+
+Notes: 
+1) Please use a `Python 3.6` environment for `GaMorNet` related tasks.
+2) Install appropriate versions of `CUDA` and `cuDNN` if you are using a `GPU`. 
+3) In our experiment, we used `Python 3.6.12` along with `cuDNN 7.6.2.24` and `CUDA 10.0.130`.
+4) See [GaMorNet Tutorial Pages about GPU](https://gamornet.readthedocs.io/en/latest/getting_started.html#gpu-support) for more information.
+
+
+
+
