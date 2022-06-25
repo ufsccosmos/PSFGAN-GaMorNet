@@ -45,6 +45,8 @@ This guide will allow readers to:
 Note: The `PSFGAN-GaMorNet` framework has multiple components, and they are expected to be executed in a **fixed** order. The output of the N-th component is by default the input of the (N+1)-th component.
 However, if you already have data that is equivalent to the output of the N-th component, you may skip using the N-th and all previous components and jump to the (N+1)-th component directly.
 ### Initial training with simulated galaxies
+In this section, we will illustrate details in training single-band `PSFGAN` and `GaMorNet` (from scratch), all using simulated galaxies (simulated AGN).
+
 Before start, please make sure you have the following directory structure:
 ```bash
 PSFGAN-GaMorNet/
@@ -346,7 +348,49 @@ save_labels(pre_prediction_labels=pre_prediction_labels, post_prediction_labels=
 ```
 
 ### Transfer learning with real galaxies
+In this section, we will illustrate details in training multi-band PSFGAN and fine-tuning previously trained GaMorNet, all using real galaxies (realistic simulated AGN).
 
+Before proceed, please familarize yourself about the "Initial training with simulated galaxies" section. Since there is a huge overlap, we will not go over every detail. Instead, we will highlight their difference (whenever there is one).
+
+Please make sure you have the following directory structure:
+```bash
+PSFGAN-GaMorNet/
+├── PSFGAN 
+    ├── add_label.py
+    ├── config.py
+    ├── data.py
+    ├── data_split.py
+    ├── galfit.py
+    ├── model.py
+    ├── normalizing.py
+    ├── photometry.py
+    ├── roouhsc.py
+    ├── test.py
+    ├── train.py
+    ├── utils.py
+    └── simard
+        ├──  g-band
+            ├── catalog_star.csv
+            ├── fits_star
+            └── raw_data
+                ├── images
+                └── Simard_Match_HSCWideAll_SelectedRows.csv
+        ├── r-band
+            └── {same as in g-band}
+        ├── i-band
+            └── {same as in g-band}
+        ├── z-band
+            └── {same as in g-band}
+        └── y-band
+            └── {same as in g-band}
+└── GaMorNet
+    ├── main.py
+    └── {other files and folders}
+```
+
+Note that each real galaxy has images in five HSC Wide filters: `g`, `r`, `i`, `z`, and `y`. Please refer to image files and catalogs for detailed information.
+
+In this guide, we will use $50,873$ real galaxies (mostly with $z<0.25$) selected from [Simard et al. (2011)](https://iopscience.iop.org/article/10.1088/0067-0049/196/1/11/pdf) (which are also imaged in HSC Wide Survey) as example.
 #### Data splitting
 #### Simulated AGN creation
 #### Training PSFGAN
