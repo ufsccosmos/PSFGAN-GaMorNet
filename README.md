@@ -401,11 +401,9 @@ Notes:
 #### Realistic simulated AGN creation
 The next step is to create artificial AGN point sources, add them with real galaxies, and normalize all of these images using the chosen stretch function. This is similar as in the "Initial training with simulated galaxies" section, except now we have five filters. 
 
-Star images and catalogs have the same format as described in the "Initial training with simulated galaxies" section.
+Star images and catalogs should have the same format as in the "Initial training with simulated galaxies" section.
 
-Parameters should be set accordingly. 
-
-Notes:
+Notes on a few parameters:
 
 In `config.py`:
 - `filters_`: this should now be `['g', 'r', 'i', 'z', 'y']`
@@ -419,7 +417,8 @@ Please be aware that in each filter, we can have an individual AGN PS to host ga
 Set other parameters accordingly.
 
 In `roouhsc.py`:
-Similar as in the "Initial training with simulated galaxies" section. Set them accordingly.
+- `--save_raw_input`: `1` (**We suggest to save them.**)
+Others are similar as in the "Initial training with simulated galaxies" section. Set them accordingly.
 
 Once all parameters are set, ran the following to create realistic simulated AGN (and normalize all images using the chosen stretch function):
 ```bash
