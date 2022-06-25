@@ -230,10 +230,79 @@ And the common test set paths:
 - `cond_input`: `'PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/fits_test_condinput/' % filter_string` (location of the common test set, original galaxies + AGN point sources --- **assuming you have saved the simulated AGN as suggested in previous steps**)
 - `test_catalog`: `pandas.read_csv(glob.glob('PSFGAN-GaMorNet/PSFGAN/gal_sim_0_0.25/%s-band/asinh_50/npy_input/catalog_test_npy_input_labeled.csv' % filter_string)[0])` (location of the corresponding catalog of the common test set --- **please make sure to use the morphologically labelled version!**)
 
+Once these parameters and paths are properly set, load all functions from:
+```bash
+### Defination
+# Define a function to convert row_num into object_id
+def row_to_id(catalog, row_num):
+    return catalog.at[row_num, 'object_id']
+```
+to
+```bash
+# Define a function to save prediction labels (save to test_catalog)
+def save_labels(pre_prediction_labels, post_prediction_labels, cond_prediction_labels, radius=0.0, type='',
+                catalog=test_catalog, catalog_folder=''):
+    length_catalog = len(catalog)
 
+    catalog['pre_disk'] = [0.0]*length_catalog
+    catalog['pre_indeterminate'] = [0.0]*length_catalog
+    catalog['pre_bulge'] = [0.0]*length_catalog
+    catalog['post_disk'] = [0.0] * length_catalog
+    catalog['post_indeterminate'] = [0.0] * length_catalog
+    catalog['post_bulge'] = [0.0] * length_catalog
+    catalog['cond_disk'] = [0.0]*length_catalog
+    catalog['cond_indeterminate'] = [0.0]*length_catalog
+    catalog['cond_bulge'] = [0.0]*length_catalog
 
+    row_num_list = list(range(length_catalog))
+    for row_num in row_num_list:
+        catalog.at[row_num, 'pre_disk'] = pre_prediction_labels[row_num, 0]
+        catalog.at[row_num, 'pre_indeterminate'] = pre_prediction_labels[row_num, 1]
+        catalog.at[row_num, 'pre_bulge'] = pre_prediction_labels[row_num, 2]
+        catalog.at[row_num, 'post_disk'] = post_prediction_labels[row_num, 0]
+        catalog.at[row_num, 'post_indeterminate'] = post_prediction_labels[row_num, 1]
+        catalog.at[row_num, 'post_bulge'] = post_prediction_labels[row_num, 2]
+        catalog.at[row_num, 'cond_disk'] = cond_prediction_labels[row_num, 0]
+        catalog.at[row_num, 'cond_indeterminate'] = cond_prediction_labels[row_num, 1]
+        catalog.at[row_num, 'cond_bulge'] = cond_prediction_labels[row_num, 2]
 
+    # Save the catalog
+    if type == '':
+        catalog.to_csv(catalog_folder + 'catalog_test_entirety_' + str(length_catalog) + '.csv', index=False)
+    else:
+        catalog.to_csv(catalog_folder + 'catalog_test_entirety_' + str(length_catalog) + '_' + type + str(int(radius)) + '.csv', index=False)
 
+```
+
+Then, we are ready to invoke `GaMorNet`.
+
+Load data: (**please change row number limits accordingly if you are using a different split than the one described in the paper**)
+```bash
+radius = 0.0
+type = ''
+
+# Load data
+# For sim_gal_0_0.25, sim_gal_0.25_0.5, sim_gal_0.5_0.75, sim_gal_0.5_1.0
+training_imgs_0, training_labels_0 = load_train_data(row_num_limits=[0, 45000], radius=radius, type=type)
+training_imgs_1, training_labels_1 = load_train_data(row_num_limits=[45000, 90000], radius=radius, type=type)
+training_imgs = np.concatenate((training_imgs_0, training_imgs_1), axis=0)
+training_labels = np.concatenate((training_labels_0, training_labels_1), axis=0)
+validation_imgs, validation_labels = load_eval_data(row_num_limits=[0, 10000], radius=radius, type=type)
+```
+
+Train the model:
+```bash
+train_model_folder = 'PSFGAN-GaMorNet/GaMorNet/saves/{your favorite folder name}' 
+if not os.path.exists(train_model_folder):
+    os.makedirs(train_model_folder)
+gamornet_train_keras(training_imgs=training_imgs, training_labels=training_labels, validation_imgs=validation_imgs, validation_labels=validation_labels,
+                     input_shape=(239, 239, 1),
+                     files_save_path=train_model_folder,
+                     epochs=100, checkpoint_freq=0,
+                     batch_size=128, lr=0.00005, momentum=0.9, decay=0.0, nesterov=False, loss='categorical_crossentropy',
+                     load_model=False, model_load_path='./', save_model=True, verbose=2)
+```
+Note: for arguments in 'gamornet_train_keras', please refer to [GaMorNet API Documentation](https://gamornet.readthedocs.io/en/latest/api_docs.html#module-gamornet.tflearn_module) for more information.
 
 
 
