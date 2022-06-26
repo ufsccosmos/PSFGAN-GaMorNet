@@ -38,13 +38,15 @@ Clone this repository and change the present working directory to `PSFGAN-GaMorN
 In this section, we will give an exhaustive guide about how to use our `PSFGAN-GaMorNet` framework as well as other related modules.
 ### Introduction
 This guide will allow readers to:
-1) Train their own version of `PSFGAN-GaMorNet` with simulated and/or real data
-2) Apply our trained version of `PSFGAN-GaMorNet` on real AGN in the HSC Wide Survey
+1) Train their own version of `PSFGAN-GaMorNet` with simulated and/or real data (**'Initial training with simulated galaxies'** and **'Transfer learning with real galaxies'**)
+2) Apply our trained version of `PSFGAN-GaMorNet` on real AGN in the HSC Wide Survey (**'Applying on real AGN'**)
 3) Use our code as a reference to build your customized computing framework based on `PSFGAN` and `GaMorNet`
+
+
 
 Note: The `PSFGAN-GaMorNet` framework has multiple components, and they are expected to be executed in a **fixed** order. The output of the N-th component is by default the input of the (N+1)-th component.
 However, if you already have data that is equivalent to the output of the N-th component, you may skip using the N-th and all previous components and jump to the (N+1)-th component directly.
-### Initial training with simulated galaxies
+### Initial training with simulated galaxies (standalone)
 In this section, we will illustrate details in training single-band `PSFGAN` and `GaMorNet` (from scratch), all using simulated galaxies (simulated AGN).
 
 Before start, please make sure you have the following directory structure:
@@ -348,7 +350,7 @@ save_labels(pre_prediction_labels=pre_prediction_labels, post_prediction_labels=
             catalog_folder={where you want to create a catalog containing model outputs})
 ```
 
-### Transfer learning with real galaxies
+### Transfer learning with real galaxies (after 'Initial training with simulated galaxies')
 In this section, we will illustrate details in training multi-band `PSFGAN` and fine-tuning previously trained `GaMorNet`, all using real galaxies (realistic simulated AGN).
 
 Before proceed, please familarize yourself about the "Initial training with simulated galaxies" section. Since there is a huge overlap, we will not go over every detail. Instead, we will highlight their difference (whenever there is one).
@@ -598,5 +600,10 @@ save_labels(pre_prediction_labels=pre_prediction_labels, post_prediction_labels=
             catalog_folder={where you want to create a catalog containing model outputs})
 ```
 
-
-
+### Applying on real AGN
+#### Data splitting
+#### Realistic simulated AGN creation
+#### Training PSFGAN
+#### Applying trained PSFGAN
+#### Generating morphological labels
+#### Fine-tuning and applying GaMorNet
