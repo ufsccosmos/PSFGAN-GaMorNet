@@ -635,12 +635,15 @@ PSFGAN-GaMorNet/
     ├── main.py
     └── {other files and folders}
 ```
+**Note: in this guide we assume your target dataset has images in five HSC Wide filters, but of course it can have less than five.**
 
 **In addition to these files, you should also have (pre-)trained `PSFGAN` and `GaMorNet` (which you are going to apply) stored at some place you know.**
 
-(In each filter) for the target dataset (to which you want to apply trained `PSFGAN` and `GaMorNet`), its raw data images should be stored (in .fits format) in an `image` folder. There should also be a separate catalog file (in .csv format) that contains necessary information of each image. **The file name of each .fits image as well as its corresponding row in the catalog can have various forms.** **Please change codes in `data_split_agn.py`, `roouhsc_agn.py`, etc. appropriately so images can be correctly processed.**
-
+(In each filter) for the target dataset, its raw data images should be stored (in .fits format) in an `image` folder. There should also be a separate catalog file (in .csv format) that contains necessary information of each image. **The file name of each .fits image as well as its corresponding row in the catalog can have various forms.** **Please change codes in `data_split_agn.py`, `roouhsc_agn.py`, etc. appropriately so images can be correctly processed.**
 #### Data splitting
+
+
+
 #### Realistic simulated AGN creation
 #### Training PSFGAN
 #### Applying trained PSFGAN
