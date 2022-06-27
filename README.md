@@ -601,6 +601,7 @@ save_labels(pre_prediction_labels=pre_prediction_labels, post_prediction_labels=
 ```
 
 ### Applying on real AGN (standalone)
+In this section, we will illustrate details of how to apply trained (multi-band) `PSFGAN` and `GaMorNet` on real AGN (from HSC Wide) in order to morphologically classify their host galaxies.
 #### Data splitting
 #### Realistic simulated AGN creation
 #### Training PSFGAN
