@@ -46,7 +46,7 @@ This guide will allow readers to:
 
 Note: The `PSFGAN-GaMorNet` framework has multiple components, and they are expected to be executed in a **fixed** order. The output of the N-th component is by default the input of the (N+1)-th component.
 However, if you already have data that is equivalent to the output of the N-th component, you may skip using the N-th and all previous components and jump to the (N+1)-th component directly.
-### Initial training with simulated galaxies (standalone)
+### Initial training with simulated galaxies (self-contained)
 In this section, we will illustrate details in training single-band `PSFGAN` and `GaMorNet` (from scratch), all using simulated galaxies (simulated AGN).
 
 Before start, please make sure you have the following directory structure:
@@ -599,7 +599,7 @@ save_labels(pre_prediction_labels=pre_prediction_labels, post_prediction_labels=
             catalog_folder={where you want to create a catalog containing model outputs})
 ```
 
-### Applying trained PSFGAN and GaMorNet on real AGN (standalone)
+### Applying trained PSFGAN and GaMorNet on real AGN (self-contained)
 In this section, we will illustrate details of how to apply trained (multi-band) `PSFGAN` and `GaMorNet` on real AGN (from HSC Wide) in order to morphologically classify their host galaxies.
 
 Before start, please make sure you have the following directory structure:
@@ -709,6 +709,29 @@ python PSFGAN-GaMorNet/PSFGAN/roouhsc_agn.py
 ```
 Corresponding folders and associated catalogs will be created. 
 #### Applying trained PSFGAN
+Since we are using trained models, there is no need to train any additional models (if you've read previous sections).
 
+We now apply the multi-band `PSFGAN` from the trained models we want to use on real AGN in the common test set. It will remove AGN point sources and generate recovered host galaxies for `GaMorNet` to classify (in each filter).
+
+Set the following parameters before proceed:
+In `config.py`:
+- `learning_rate`: (just for creating corresponding folder names) **please refer to the 'Notes on our trained PSFGAN and GaMorNet models' section for details**. 
+- `attention_parameter`: `0.05` (just for creating corresponding folder names)
+- `model_path`: `'{location of the trained PSFGAN you want to use}'` 
+- `beta1`: `0.5`
+- `L1_lambda`: `100`
+- `sum_lambda`: `0`
+- `test_epoch`: **please refer to the 'Notes on our trained PSFGAN and GaMorNet models' section for details**. 
+- `img_size`: `239`
+- `train_size`: `239`
+
+Other parameters should be kept the same as in the previous step.
+
+In `model.py`:
+- `self.image_00`, `self.cond_00`, and `self.g_img_00`: **please refer to the 'Notes on our trained PSFGAN and GaMorNet models' section for details**. **These values are subject to the trained model you want to use and should be fixed.**
+
+The default `discriminator(self, img, cond, reuse)` and `generator(self, cond)` structures fit our trained `PSFGAN` and `GaMorNet` models. If you are using our trained models, please leave them as so.
+
+Then, ran `python PSFGAN-GaMorNet/PSFGAN/test.py --mode test` to apply the trained `PSFGAN` on the common test set. Outputs will be saved in `PSFGAN-GaMorNet/PSFGAN/{target dataset name}/{filter}-band/{stretch_type}_{scale_factor}/lintrain_classic_PSFGAN_{attention_parameter}/lr_{learning_rate}/PSFGAN_output/epoch_{test_epoch}/fits_output/`.
 #### Applying trained GaMorNet
 ### Notes on our trained PSFGAN and GaMorNet models
