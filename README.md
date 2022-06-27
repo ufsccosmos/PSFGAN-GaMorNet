@@ -22,13 +22,12 @@ PSFGAN-GaMorNet
             ├── Applying trained PSFGAN
             ├── Generating morphological labels
             └── Fine-tuning and applying GaMorNet
-        └── Applying trained PSFGAN and GaMorNet on real AGN
+        ├── Applying trained PSFGAN and GaMorNet on real AGN
             ├── Data splitting
             ├── Real AGN image normalization
-            ├──
-            ├──
-            ├──
-            ├──
+            ├── Applying trained PSFGAN
+            └── Applying trained GaMorNet
+        └── Notes on our trained PSFGAN and GaMorNet models
 ```
 ## Dependencies
 `Linux` or `OSX`
