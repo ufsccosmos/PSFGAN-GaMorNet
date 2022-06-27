@@ -90,7 +90,7 @@ The first step is to split raw data images into five subsets:
 
 To do so, we will need to use `data_split.py`. Set the following parameters to correct values before proceed:
 - `core_path`: path in which PSFGAN is stored (see above)
-- `galaxy_main`: `core_path` + `gal_sim_0_0.25/`
+- `galaxy_main`: `core_path` + `'gal_sim_0_0.25/'`
 - `filter_strings`: `['g']` (filter(s) of raw data images)
 - `desired_shape`: `[239, 239]` (desired shape of output images in pixels)
 - `--gmn_train`, `--gmn_eval`, `--psf_train`, `--psf_eval`, and `--test`: set their default values to numbers of images you want each subset to have (they should sum up to $150,000$, the number of images in `raw_data` of `gal_sim_0_0.25`)
