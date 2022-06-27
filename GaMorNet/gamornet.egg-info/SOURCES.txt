@@ -1,0 +1,10 @@
+README.rst
+setup.py
+gamornet/__init__.py
+gamornet/keras_module.py
+gamornet/tflearn_module.py
+gamornet.egg-info/PKG-INFO
+gamornet.egg-info/SOURCES.txt
+gamornet.egg-info/dependency_links.txt
+gamornet.egg-info/requires.txt
+gamornet.egg-info/top_level.txt
