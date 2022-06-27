@@ -38,8 +38,8 @@ Clone this repository and change the present working directory to `PSFGAN-GaMorN
 In this section, we will give an exhaustive guide about how to use our `PSFGAN-GaMorNet` framework as well as other related modules.
 ### Introduction
 This guide will allow readers to:
-1) Train their own version of `PSFGAN-GaMorNet` with simulated and/or real data (**'Initial training with simulated galaxies'** and **'Transfer learning with real galaxies'**)
-2) Apply our trained version of `PSFGAN-GaMorNet` on real AGN in the HSC Wide Survey (**'Applying on real AGN'**)
+1) Train their own version of `PSFGAN-GaMorNet` with simulated and/or real data (jump to **'Initial training with simulated galaxies'** and **'Transfer learning with real galaxies'**)
+2) Apply our trained version of `PSFGAN-GaMorNet` on real AGN in the HSC Wide Survey (jump to **'Applying on real AGN'**)
 3) Use our code as a reference to build your customized computing framework based on `PSFGAN` and `GaMorNet`
 
 
