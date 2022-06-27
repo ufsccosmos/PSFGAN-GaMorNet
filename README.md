@@ -643,10 +643,10 @@ PSFGAN-GaMorNet/
 #### Data splitting
 Essentially, the first step we want to do is to put all raw images in the common test dataset folder(s) (`fits_test`). No actual data split is done. We will use `data_split_agn.py` to do so. This file is forked from `data_split.py`. **We still call this step as 'data splitting' to keep their accordance.**
 
-In `data_split_agn.py`, set the following parameters to correct values before proceed:
+In `data_split_agn.py`, set the following parameters to the correct values before proceed:
 - `core_path`: path in which PSFGAN is stored (see above)
 - `galaxy_main`: `core_path` + `'{target dataset name}/'`
-- `filter_strings`: `['g', 'r', 'i', 'z', 'y']` (filter(s) of raw data images of the target dataset --- we assume it has images in all five HSC Wide filters)
+- `filter_strings`: `['g', 'r', 'i', 'z', 'y']` (**filter(s) of raw data images of the target dataset (also subject to the trained models) --- if you are using our models, it has to be `['g', 'r', 'i', 'z', 'y']`**)
 - `desired_shape`: `[239, 239]` (desired shape of output images in pixels --- **this is subject to the trained models you want to use** --- **it has to be `[239, 239]` if you are using our trained models**)
 - `--test`: set its default value to the number of galaxies your target dataset has
 - `--shuffle`: `1` (`1` to shuffle images before splitting, `0` otherwise)
@@ -689,6 +689,26 @@ At last, change the following block appropriately to process raw images.
 Once these parameters are properly set, ran `python PSFGAN-GaMorNet/PSFGAN/data_split_agn.py`.
 Corresponding folders and their associated catalogs will be created.
 #### Real AGN image normalization
+The next step is to normalize all images of real AGN in the common test set using the chosen stretch function. (In case you've read previous sections) there is no need to create artificial AGN point sources --- real AGN also have them.  For the same reason, we don't need star images and their associated catalogs.
+
+Certain parameters need to be properly set before we proceed:
+
+In `config.py`:
+- `redshift`:  `'{target dataset name}'` 
+- `filters_`:  `['g', 'r', 'i', 'z', 'y']` (**filter(s) of data images of the target dataset (also subject to the trained models) --- if you are using our models, it has to be `['g', 'r', 'i', 'z', 'y']`**)
+- `stretch_type` and `scale_factor`: `'asinh'` and `50` (**they are subject to the trained models --- if you are using our trained models, please keep these values fixed as so**)
+- `if redshift == '{target dataset name}':` then `pixel_max_value` (please add this block): (the largest pixel value allowed (pre-normliazation)) **please refer to the 'Notes on our trained PSFGAN and GaMorNet models' section for details**. **This value is subject to the trained model you want to use and thus can not be adjusted.** 
+
+In `roouhsc_agn.py`:
+- `--source`:  `'{target dataset name}'` (name of the target dataset --- this should be the same of the corresponding folder name)
+- `--crop`: `0` (set this to be zero so images are not cropped during normalization)
+
+Once all parameters are set, ran the following to normalize all images in the common test set using the chosen stretch function:
+```bash
+python PSFGAN-GaMorNet/PSFGAN/roouhsc_agn.py 
+```
+Corresponding folders and associated catalogs will be created. 
 #### Applying trained PSFGAN
+
 #### Applying trained GaMorNet
 ### Notes on our trained PSFGAN and GaMorNet models
