@@ -652,7 +652,7 @@ In `data_split_agn.py`, set the following parameters to correct values before pr
 - `--shuffle`: `1` (`1` to shuffle images before splitting, `0` otherwise)
 - `--source`: `'{target dataset name}'` (name of the target dataset --- this should be the same of the corresponding folder name)
 
-You should also add appropriate codes at the ends of the following two blocks to process `{catalog in .csv format}`:
+You should also add appropriate codes at the ends of the following two blocks to process catalog(s) of the raw images:
 ```bash
         elif source == "liu":
             column_list = ['object_id', 'ra', 'dec', 'specz_redshift', 'specz_flag_homogeneous',
