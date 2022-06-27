@@ -637,27 +637,57 @@ PSFGAN-GaMorNet/
 ```
 **Note: in this guide we assume your target dataset has images in five HSC Wide filters, but of course it can have less than five.**
 
-**In addition to these files, you should also have (pre-)trained `PSFGAN` and `GaMorNet` (which you are going to apply) stored at some place you know.**
 
 (In each filter) for the target dataset, its raw data images should be stored (in .fits format) in an `image` folder. There should also be a separate catalog file (in .csv format) that contains necessary information of each image. **The file name of each .fits image as well as its corresponding row in the catalog can have various forms.** **Please change codes in `data_split_agn.py`, `roouhsc_agn.py`, etc. appropriately so images can be correctly processed.**
 
 #### Data splitting
-Essentially, the first step we want to do is to put all raw images in the common test dataset folder(s) (`fits_test`). No actual data split is done. We will use `data_split_agn.py` to do so. This file is forked from `data_split.py`. We still call this step as 'data splitting' to keep their accordance.
+Essentially, the first step we want to do is to put all raw images in the common test dataset folder(s) (`fits_test`). No actual data split is done. We will use `data_split_agn.py` to do so. This file is forked from `data_split.py`. **We still call this step as 'data splitting' to keep their accordance.**
 
 In `data_split_agn.py`, set the following parameters to correct values before proceed:
 - `core_path`: path in which PSFGAN is stored (see above)
-- `galaxy_main`: `core_path` + `{target dataset name}/`
-- `filter_strings`: `['g']` (filter(s) of raw data images)
-- `desired_shape`: `[239, 239]` (desired shape of output images in pixels)
-- `--gmn_train`, `--gmn_eval`, `--psf_train`, `--psf_eval`, and `--test`: set their default values to numbers of images you want each subset to have (they should sum up to $150,000$, the number of images in `raw_data` of `gal_sim_0_0.25`)
+- `galaxy_main`: `core_path` + `'{target dataset name}/'`
+- `filter_strings`: `['g', 'r', 'i', 'z', 'y']` (filter(s) of raw data images of the target dataset --- we assume it has iamges in all five HSC Wide filters)
+- `desired_shape`: `[239, 239]` (desired shape of output images in pixels --- **this is subject to the trained models you want to use** --- **it has to be `[239, 239]` if you are using our trained models**)
+- `--test`: set its default value to the number of images (in each filter) your target dataset has
 - `--shuffle`: `1` (`1` to shuffle images before splitting, `0` otherwise)
-- `--source`: `'gal_sim_0_0.25'` (name of the source of the raw data --- this should be the same of the corresponding folder name)
-- `--split`: `equal` (`equal` will ensure roughly the same ratio of disks to bulges to indeterminates across subsets --- look for the corresponding part in the source code for `unequal` split)
+- `--source`: `'{target dataset name}'` (name of the target dataset --- this should be the same of the corresponding folder name)
 
-Once these parameters are properly set, ran `python PSFGAN-GaMorNet/PSFGAN/data_split.py`.
+You should also add appropriate codes at the ends of the following two blocks to process `{catalog in .csv format}`:
+```bash
+        elif source == "liu":
+            column_list = ['object_id', 'ra', 'dec', 'specz_redshift', 'specz_flag_homogeneous',
+                          'z', 
+                          filter_string + '_total_flux']       
+```
+```bash
+                elif source == "liu":
+                    test_catalogs[i] = test_catalogs[i].append({'object_id': obj_id,
+                    'ra': current_row['ra'],
+                    'dec': current_row['dec'],
+                    'specz_redshift': current_row['specz_redshift'],
+                    'specz_flag_homogeneous': current_row['specz_flag_homogeneous'],
+                    'z': current_row['z'],
+                    filter_strings[i] + '_total_flux': (current_row[filter_strings[i] + '_cmodel_flux'])*nJy_to_adu_per_AA_filters[i]}, ignore_index=True)
+```
+
+At last, change the following block appropriately to process raw images.
+```bash
+    for row_num in row_num_list:
+        if (source == "nair") or (source == "gabor_0.3_0.5") or (source == "gabor_0.5_0.75") or (source == "povic_0_0.5") or (source == "povic_0.5_0.75") or (source == "stemo_0.2_0.5") or (source == "stemo_0.5_1.0") or (source == "liu"):
+            obj_id = int(row_num)
+
+        # Read the images
+        images = []
+        for i in range(num_filters):
+            if (source == "nair") or (source == "gabor_0.3_0.5") or (source == "gabor_0.5_0.75") or (source == "povic_0_0.5") or (source == "povic_0.5_0.75") or (source == "stemo_0.2_0.5") or (source == "stemo_0.5_1.0") or (source == "liu"):
+                fits_path = '%s/%s-cutout-*.fits' % (hsc_folders[i], obj_id)
+            file = glob.glob(fits_path)[0]
+            image = fits.getdata(file)
+            images.append(image)
+```
+
+Once these parameters are properly set, ran `python PSFGAN-GaMorNet/PSFGAN/data_split_agn.py`.
 Corresponding folders and their associated catalogs will be created.
-
-
 #### Realistic simulated AGN creation
 #### Training PSFGAN
 #### Applying trained PSFGAN
