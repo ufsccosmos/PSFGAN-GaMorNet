@@ -648,7 +648,7 @@ In `data_split_agn.py`, set the following parameters to correct values before pr
 - `galaxy_main`: `core_path` + `'{target dataset name}/'`
 - `filter_strings`: `['g', 'r', 'i', 'z', 'y']` (filter(s) of raw data images of the target dataset --- we assume it has images in all five HSC Wide filters)
 - `desired_shape`: `[239, 239]` (desired shape of output images in pixels --- **this is subject to the trained models you want to use** --- **it has to be `[239, 239]` if you are using our trained models**)
-- `--test`: set its default value to the number of images (in each filter) your target dataset has
+- `--test`: set its default value to the number of galaxies your target dataset has
 - `--shuffle`: `1` (`1` to shuffle images before splitting, `0` otherwise)
 - `--source`: `'{target dataset name}'` (name of the target dataset --- this should be the same of the corresponding folder name)
 
