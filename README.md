@@ -22,7 +22,7 @@ PSFGAN-GaMorNet
             ├── Applying trained PSFGAN
             ├── Generating morphological labels
             └── Fine-tuning and applying GaMorNet
-        └── Applying on real AGN
+        └── Applying trained PSFGAN and GaMorNet on real AGN
 ```
 ## Dependencies
 `Linux` or `OSX`
@@ -72,7 +72,6 @@ PSFGAN-GaMorNet/
             └── raw_data
                 ├── images
                 └── sim_para_all.csv
-             
 └── GaMorNet
     ├── main.py
     └── {other files and folders}
@@ -600,11 +599,51 @@ save_labels(pre_prediction_labels=pre_prediction_labels, post_prediction_labels=
             catalog_folder={where you want to create a catalog containing model outputs})
 ```
 
-### Applying on real AGN (standalone)
+### Applying trained PSFGAN and GaMorNet on real AGN (standalone)
 In this section, we will illustrate details of how to apply trained (multi-band) `PSFGAN` and `GaMorNet` on real AGN (from HSC Wide) in order to morphologically classify their host galaxies.
+
+Before start, please make sure you have the following directory structure:
+```bash
+PSFGAN-GaMorNet/
+├── PSFGAN 
+    ├── add_label.py
+    ├── config.py
+    ├── data.py
+    ├── data_split_agn.py
+    ├── galfit.py
+    ├── model.py
+    ├── normalizing.py
+    ├── photometry.py
+    ├── roouhsc_agn.py
+    ├── test.py
+    ├── train.py
+    ├── utils.py
+    └── {target dataset name}
+        ├──  g-band
+            └── raw_data
+                ├── images
+                └── {catalog in .csv format}
+        ├── r-band
+            └── {same as in g-band}
+        ├── i-band
+            └── {same as in g-band}
+        ├── z-band
+            └── {same as in g-band}
+        └── y-band
+            └── {same as in g-band}
+└── GaMorNet
+    ├── main.py
+    └── {other files and folders}
+```
+
+**In addition to these files, you should also have (pre-)trained `PSFGAN` and `GaMorNet` (which you are going to apply) stored at some place you know.**
+
+(In each filter) for the target dataset (to which you want to apply trained `PSFGAN` and `GaMorNet`), its raw data images should be stored (in .fits format) in an `image` folder. There should also be a separate catalog file (in .csv format) that contains necessary information of each image. **The file name of each .fits image as well as its corresponding row in the catalog can have various forms.** **Please change codes in `data_split_agn.py`, `roouhsc_agn.py`, etc. appropriately so images can be correctly processed.**
+
 #### Data splitting
 #### Realistic simulated AGN creation
 #### Training PSFGAN
 #### Applying trained PSFGAN
 #### Generating morphological labels
 #### Fine-tuning and applying GaMorNet
+### Notes on our trained PSFGAN and GaMorNet models
