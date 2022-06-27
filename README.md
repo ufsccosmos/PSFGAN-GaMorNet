@@ -709,6 +709,8 @@ python PSFGAN-GaMorNet/PSFGAN/roouhsc_agn.py
 ```
 Corresponding folders and associated catalogs will be created. 
 #### Applying trained PSFGAN
+Note: please use a `Python 2.7` environment for `PSFGAN` related tasks.
+
 Since we are using trained models, there is no need to train any additional models (if you've read previous sections).
 
 We now apply the multi-band `PSFGAN` from the trained models we want to use on real AGN in the common test set. It will remove AGN point sources and generate recovered host galaxies for `GaMorNet` to classify (in each filter).
@@ -732,6 +734,131 @@ In `model.py`:
 
 The default `discriminator(self, img, cond, reuse)` and `generator(self, cond)` structures fit our trained `PSFGAN` and `GaMorNet` models. If you are using our trained models, please leave them as so.
 
-Then, ran `python PSFGAN-GaMorNet/PSFGAN/test.py --mode test` to apply the trained `PSFGAN` on the common test set. Outputs will be saved in `PSFGAN-GaMorNet/PSFGAN/{target dataset name}/{filter}-band/{stretch_type}_{scale_factor}/lintrain_classic_PSFGAN_{attention_parameter}/lr_{learning_rate}/PSFGAN_output/epoch_{test_epoch}/fits_output/`.
+Then, ran `python PSFGAN-GaMorNet/PSFGAN/test.py --mode test` to apply the trained `PSFGAN` on the common test set. Outputs will be saved in `PSFGAN-GaMorNet/PSFGAN/{target dataset name}/{filter}-band/{stretch_type}_{scale_factor}/lintrain_classic_PSFGAN_{attention_parameter}/lr_{learning_rate}/PSFGAN_output/epoch_{test_epoch}/fits_output/` for each {filter}.
 #### Applying trained GaMorNet
+We now apply each version of `GaMorNet` from the trained models we want to use on recovered host galaxies of real AGN in the common test set. Please be advised that although the multi-band `PSFGAN` deals with five filters simultaneously, each version of `GaMorNet` is single-band by design. So if there are five filters (if you are using our trained models, for example), one needs to apply five versions of `GaMorNet` --- each on images in the corresponding filter.
+
+Notes: 
+1) Please use a `Python 3.6` environment for `GaMorNet` related tasks.
+2) Install appropriate versions of `CUDA` and `cuDNN` if you are using a `GPU`. 
+3) In our experiment, we used `Python 3.6.12` with `cuDNN 7.6.2.24` and `CUDA 10.0.130`.
+4) See [GaMorNet Tutorial Pages about GPU](https://gamornet.readthedocs.io/en/latest/getting_started.html#gpu-support) for more information.
+
+To start, please find the `main.py` file under `PSFGAN-GaMorNet/GaMorNet/`. 
+
+In `main.py`:
+
+If you are using a `GPU`, ran the following before loading `GaMorNet` modules:
+```bash
+### Preparation
+# First, we will check whether we have access to a GPU (required by the GPU version GaMorNet)
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+if tf.test.gpu_device_name() != '/device:GPU:0':
+  print('WARNING: GPU device not found.')
+else:
+  print('SUCCESS: Found GPU: {}'.format(tf.test.gpu_device_name()))
+
+print(tf.__version__)
+print(gamornet.__version__)
+```
+
+Please be aware that although we used a multi-band `PSFGAN`, `GaMorNet` is single-band by design. **Please ran the following steps for each filter that the trained models you want to use can support. If you are using our trained models, all five HSC Wide filters are available.**
+
+Set a few parameters:
+- `filter_string`: `{filter}` (e.g. `'g'`, `'r'`, etc.)
+- `image_shape`: `[239, 239]` 
+- `img_center`: `[119, 119]`
+
+Common test set paths:
+- `pre_psf`: `'PSFGAN-GaMorNet/PSFGAN/{target dataset name}/%s-band/fits_test/' % filter_string` (location of the common test set, real AGN --- **this is now just a place holder since we know know exactly what the host galaxies of real AGN would be**)
+- `post_psf`: `'PSFGAN-GaMorNet/PSFGAN/{target dataset name}/%s-band/{stretch_type}_{scale_factor}/lintrain_classic_PSFGAN_{attention_parameter}/lr_{learning_rate}/PSFGAN_output/epoch_{test_epoch}/fits_output/' % filter_string` (location of the common test set, recovered host galaxies)
+- `cond_input`: `'PSFGAN-GaMorNet/PSFGAN/{target dataset name}/%s-band/fits_test/' % filter_string` (location of the common test set, real AGN)
+- `test_catalog`: `pandas.read_csv(glob.glob('PSFGAN-GaMorNet/PSFGAN/{target dataset name}/%s-band/{stretch_type}_{scale_factor}/npy_input/catalog_test_npy_input.csv' % filter_string)[0])` (location of the corresponding catalog of the common test set)
+
+Once these parameters and paths are properly set, load all functions from:
+```bash
+### Defination
+# Define a function to convert row_num into object_id
+def row_to_id(catalog, row_num):
+    return catalog.at[row_num, 'object_id']
+```
+to
+```bash
+# Define a function to save prediction labels (save to test_catalog)
+def save_labels(pre_prediction_labels, post_prediction_labels, cond_prediction_labels, radius=0.0, type='',
+                catalog=test_catalog, catalog_folder=''):
+    length_catalog = len(catalog)
+
+    catalog['pre_disk'] = [0.0]*length_catalog
+    catalog['pre_indeterminate'] = [0.0]*length_catalog
+    catalog['pre_bulge'] = [0.0]*length_catalog
+    catalog['post_disk'] = [0.0] * length_catalog
+    catalog['post_indeterminate'] = [0.0] * length_catalog
+    catalog['post_bulge'] = [0.0] * length_catalog
+    catalog['cond_disk'] = [0.0]*length_catalog
+    catalog['cond_indeterminate'] = [0.0]*length_catalog
+    catalog['cond_bulge'] = [0.0]*length_catalog
+
+    row_num_list = list(range(length_catalog))
+    for row_num in row_num_list:
+        catalog.at[row_num, 'pre_disk'] = pre_prediction_labels[row_num, 0]
+        catalog.at[row_num, 'pre_indeterminate'] = pre_prediction_labels[row_num, 1]
+        catalog.at[row_num, 'pre_bulge'] = pre_prediction_labels[row_num, 2]
+        catalog.at[row_num, 'post_disk'] = post_prediction_labels[row_num, 0]
+        catalog.at[row_num, 'post_indeterminate'] = post_prediction_labels[row_num, 1]
+        catalog.at[row_num, 'post_bulge'] = post_prediction_labels[row_num, 2]
+        catalog.at[row_num, 'cond_disk'] = cond_prediction_labels[row_num, 0]
+        catalog.at[row_num, 'cond_indeterminate'] = cond_prediction_labels[row_num, 1]
+        catalog.at[row_num, 'cond_bulge'] = cond_prediction_labels[row_num, 2]
+
+    # Save the catalog
+    if type == '':
+        catalog.to_csv(catalog_folder + 'catalog_test_entirety_' + str(length_catalog) + '.csv', index=False)
+    else:
+        catalog.to_csv(catalog_folder + 'catalog_test_entirety_' + str(length_catalog) + '_' + type + str(int(radius)) + '.csv', index=False)
+```
+
+Then, we are ready to invoke `GaMorNet`.
+
+Load data and apply the model: (**please change row number limits accordingly depending on the number of galaxies in your common test set.**)
+```bash
+radius = 0.0
+type = ''
+
+# Load pre and post PSFGAN results along with conditional inputs
+pre_imgs = load_pre_psf(row_num_limits=[0, {number of galaxies in common test set}], radius=radius, type=type)
+post_imgs = load_post_psf(row_num_limits=[0, {number of galaxies in common test set}], radius=radius, type=type)
+cond_imgs = load_cond_inputs(row_num_limits=[0, {number of galaxies in common test set}], radius=radius, type=type)
+rsdl_imgs = post_imgs - pre_imgs
+```
+
+```bash
+# Use the model to make prediction
+test_model ='{location of the trained GaMorNet model in this filter}'
+pre_prediction_labels = gamornet_predict_keras(img_array=pre_imgs,
+                                                 model_load_path=test_model,
+                                                 input_shape=(image_shape[0], image_shape[1], 1),
+                                                 batch_size=64, individual_arrays=False)
+post_prediction_labels = gamornet_predict_keras(img_array=post_imgs,
+                                                  model_load_path=test_model,
+                                                  input_shape=(image_shape[0], image_shape[1], 1),
+                                                  batch_size=64, individual_arrays=False)
+cond_prediction_labels = gamornet_predict_keras(img_array=cond_imgs,
+                                                  model_load_path=test_model,
+                                                  input_shape=(image_shape[0], image_shape[1], 1),
+                                                  batch_size=64, individual_arrays=False)
+```
+
+Note: for arguments in 'gamornet_train_keras', please refer to [GaMorNet API Documentation](https://gamornet.readthedocs.io/en/latest/api_docs.html#module-gamornet.tflearn_module) for more information.
+
+At last, save their outputs:
+```bash
+## Save the prediction labels together with the test catalog (creating a new catalog)
+# Remember to set the catalog folder.
+save_labels(pre_prediction_labels=pre_prediction_labels, post_prediction_labels=post_prediction_labels,
+            cond_prediction_labels=cond_prediction_labels, radius=radius, type=type,
+            catalog_folder={where you want to create a catalog containing model outputs})
+```
+
+In each filter, the morphological classification results on the recovered host galaxies are saved in column **'post_disk'**, **'post_indeterminate'**, and **'post_bulge'** in the output catalog. (please refer to the paper for meanings of these values). By default, the output catalog is named **'catalog_test_entirety_{number of galaxies in common test set}.csv'**.
 ### Notes on our trained PSFGAN and GaMorNet models
