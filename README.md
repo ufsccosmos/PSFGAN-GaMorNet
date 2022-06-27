@@ -688,9 +688,7 @@ At last, change the following block appropriately to process raw images.
 
 Once these parameters are properly set, ran `python PSFGAN-GaMorNet/PSFGAN/data_split_agn.py`.
 Corresponding folders and their associated catalogs will be created.
-#### Realistic simulated AGN creation
-#### Training PSFGAN
+#### Real AGN image normalization
 #### Applying trained PSFGAN
-#### Generating morphological labels
-#### Fine-tuning and applying GaMorNet
+#### Applying trained GaMorNet
 ### Notes on our trained PSFGAN and GaMorNet models
