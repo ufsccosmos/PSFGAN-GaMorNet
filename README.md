@@ -350,7 +350,7 @@ save_labels(pre_prediction_labels=pre_prediction_labels, post_prediction_labels=
             catalog_folder={where you want to create a catalog containing model outputs})
 ```
 
-### Transfer learning with real galaxies (after 'Initial training with simulated galaxies')
+### Transfer learning with real galaxies (please read 'Initial training with simulated galaxies' first)
 In this section, we will illustrate details in training multi-band `PSFGAN` and fine-tuning previously trained `GaMorNet`, all using real galaxies (realistic simulated AGN).
 
 Before proceed, please familarize yourself about the "Initial training with simulated galaxies" section. Since there is a huge overlap, we will not go over every detail. Instead, we will highlight their difference (whenever there is one).
@@ -600,7 +600,7 @@ save_labels(pre_prediction_labels=pre_prediction_labels, post_prediction_labels=
             catalog_folder={where you want to create a catalog containing model outputs})
 ```
 
-### Applying on real AGN
+### Applying on real AGN (standalone)
 #### Data splitting
 #### Realistic simulated AGN creation
 #### Training PSFGAN
