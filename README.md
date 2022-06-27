@@ -640,8 +640,22 @@ PSFGAN-GaMorNet/
 **In addition to these files, you should also have (pre-)trained `PSFGAN` and `GaMorNet` (which you are going to apply) stored at some place you know.**
 
 (In each filter) for the target dataset, its raw data images should be stored (in .fits format) in an `image` folder. There should also be a separate catalog file (in .csv format) that contains necessary information of each image. **The file name of each .fits image as well as its corresponding row in the catalog can have various forms.** **Please change codes in `data_split_agn.py`, `roouhsc_agn.py`, etc. appropriately so images can be correctly processed.**
-#### Data splitting
 
+#### Data splitting
+Essentially, the first step we want to do is to put all raw images in the common test dataset folder(s) (`fits_test`). No actual data split is done. We will use `data_split_agn.py` to do so. This file is forked from `data_split.py`. We still call this step as 'data splitting' to keep their accordance.
+
+In `data_split_agn.py`, set the following parameters to correct values before proceed:
+- `core_path`: path in which PSFGAN is stored (see above)
+- `galaxy_main`: `core_path` + `{target dataset name}/`
+- `filter_strings`: `['g']` (filter(s) of raw data images)
+- `desired_shape`: `[239, 239]` (desired shape of output images in pixels)
+- `--gmn_train`, `--gmn_eval`, `--psf_train`, `--psf_eval`, and `--test`: set their default values to numbers of images you want each subset to have (they should sum up to $150,000$, the number of images in `raw_data` of `gal_sim_0_0.25`)
+- `--shuffle`: `1` (`1` to shuffle images before splitting, `0` otherwise)
+- `--source`: `'gal_sim_0_0.25'` (name of the source of the raw data --- this should be the same of the corresponding folder name)
+- `--split`: `equal` (`equal` will ensure roughly the same ratio of disks to bulges to indeterminates across subsets --- look for the corresponding part in the source code for `unequal` split)
+
+Once these parameters are properly set, ran `python PSFGAN-GaMorNet/PSFGAN/data_split.py`.
+Corresponding folders and their associated catalogs will be created.
 
 
 #### Realistic simulated AGN creation
