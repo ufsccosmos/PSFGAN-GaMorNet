@@ -905,7 +905,7 @@ Once you have decided which redshift bin to use, please apply the trained multi-
 
 For details of how to apply our trained models, please refer to the 'Applying trained PSFGAN and GaMorNet on real AGN' section. 
 
-**Here we will highlight sets of parameters that will be used when using our models:**
+**Here we will highlight parameters that should be set exactly as so when using our models:**
 
 In `config.py`:
 - `learning_rate`: `0.00009` if you are using our low redshift bin models; `0.00002` if you are using our mid redshift bin models; `0.000005` if you are using our high redshift bin models.
