@@ -872,7 +872,7 @@ As illustrated in the paper, in each of the three redshift bins, we trained a ve
 ```bash
 Low redshift bin (0<z<0.25)
     └── Multi-band PSFGAN
-        ├── **GaMorNet for g-band**
+        ├── GaMorNet for g-band
         ├── GaMorNet for r-band
         ├── GaMorNet for i-band
         ├── GaMorNet for z-band
@@ -880,7 +880,7 @@ Low redshift bin (0<z<0.25)
 Mid redshift bin (0.25<z<0.5)
     └── Multi-band PSFGAN 
         ├── GaMorNet for g-band
-        ├── **GaMorNet for r-band**
+        ├── GaMorNet for r-band
         ├── GaMorNet for i-band
         ├── GaMorNet for z-band
         └── GaMorNet for y-band
@@ -888,7 +888,7 @@ High redshift bin (0.5<z<1.0)
     └── Multi-band PSFGAN 
         ├── GaMorNet for g-band
         ├── GaMorNet for r-band
-        ├── **GaMorNet for i-band**
+        ├── GaMorNet for i-band
         ├── GaMorNet for z-band
         └── GaMorNet for y-band
 ```
