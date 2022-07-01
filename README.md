@@ -38,7 +38,9 @@ PSFGAN-GaMorNet
 
 Python modules (including but not limited to): `NumPy`, `SciPy`, `Astropy`, `Pandas`, `TensorFlow`, etc.
 ## Installation
-Clone this repository and change the present working directory to `PSFGAN-GaMorNet/`.
+Clone this repository and change the present working directory to `PSFGAN-GaMorNet/`. 
+
+Alternatively, you can download our models from our [Google Drive](https://drive.google.com/drive/folders/13653JlOEr4ChKGJXm1htkw-8xo5Sf2t1?usp=sharing) (including example datasets used by the guide and our trained models of `PSFGAN` and `GaMorNet`). 
 ## A comprehensive guide to using PSFGAN-GaMorNet
 In this section, we will give an exhaustive guide about how to use our `PSFGAN-GaMorNet` framework as well as other related modules.
 ### Introduction
