@@ -84,7 +84,7 @@ PSFGAN-GaMorNet/
     └── {other files and folders}
 ```
 
-The `PSFGAN-GaMorNet` assumes raw data images are stored (in .fits format) in an `image` folder. There should also be a separate catalog file (in .csv format) that contains necessary information of each image. (Please refer to these files for detailed information)
+The `PSFGAN-GaMorNet` assumes raw data images are stored (in .fits format) in an `images` folder. There should also be a separate catalog file (in .csv format) that contains necessary information of each image. (Please refer to these files for detailed information)
 
 We will use $150,000$ simulated galaxies (which were created w.r.t. 0<z<0.25 real galaxies in HSC Wide Survey) as example.
 #### Data splitting
